@@ -1,0 +1,26 @@
+<!-- templates/forum.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Forum</h1>
+
+    <!-- Forum Posts -->
+    <div class="row">
+        <div class="col-md-8">
+            {% for post in forum_posts %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ post.title }}</h2>
+                        <p class="card-text">{{ post.content }}</p>
+                        <p class="card-text"><small class="text-muted">Posted on {{ post.pub_date|date:"F d, Y" }} by {{ post.author }}</small></p>
+                        <!-- Add buttons for liking/disliking and responding to posts if needed -->
+                    </div>
+                </div>
+            {% empty %}
+                <p>No forum posts available.</p>
+            {% endfor %}
+        </div>
+        <!-- You can add a sidebar or other content here if needed -->
+    </div>
+{% endblock %}

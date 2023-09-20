@@ -1,0 +1,44 @@
+<!-- templates/base.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solar Power</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'blog' %}">Blog</a>
+            <a href="{% url 'forum' %}">Forum</a>
+            <a href="{% url 'calculator' %}">Calculators</a>
+            <!-- Add user profile dropdown to the far right -->
+            {% if user.is_authenticated %}
+                <!-- Dropdown for logged-in users -->
+                <div class="dropdown" style="float: right;">
+                    <button class="dropbtn">{{ request.user.username }}</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'user_profile' %}">Profile</a>
+                        <a href="{% url 'logout' %}">Logout</a>
+                        <!-- Add more dropdown items as needed -->
+                    </div>
+                </div>
+            {% else %}
+                <!-- Link to login for users who are not logged in -->
+                <a href="{% url 'login' %}" style="float: right;">Login</a>
+                <a href="{% url 'register' %}" style="float: right;">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <!-- Include Django messages here -->
+
+    <script src="{% static 'js/scripts.js' %}"></script>
+
+</body>
+</html>
