@@ -13,10 +13,6 @@ def blog(request):
     blog_posts = BlogPost.objects.all()
     return render(request, 'blog.html', {'blog_posts': blog_posts})
 
-def forum(request):
-    forum_posts = ForumPost.objects.all()
-    return render(request, 'forum.html', {'forum_posts': forum_posts})
-
 def home(request):
     return render(request, 'home.html')
 

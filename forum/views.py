@@ -1,6 +1,8 @@
 # forum/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from .models import Thread, Response, Vote
 from .forms import ThreadForm, ResponseForm
 
@@ -53,18 +55,30 @@ def view_thread(request, thread_id):
         form = ResponseForm()
     return render(request, 'forum/view_thread.html', {'thread': thread, 'form': form})
 
-@login_required
-def vote(request, response_id, value):
-    response = get_object_or_404(Response, pk=response_id)
-    user = request.user
+@require_POST
+def vote_response(request):
+    response_id = request.GET.get('response_id')  # Retrieve response_id from URL parameter
+    vote_type = request.GET.get('vote_type')  # Retrieve vote_type from URL parameter
 
     try:
-        vote = Vote.objects.get(response=response, voter=user)
-        if vote.value != value:
-            vote.value = value
-            vote.save()
-    except Vote.DoesNotExist:
-        vote = Vote(response=response, voter=user, value=value)
-        vote.save()
-
-    return redirect('view_thread', thread_id=response.thread.id)
+        response = Response.objects.get(pk=response_id)
+        
+        # Check if the user has already voted for this response
+        existing_vote = Vote.objects.filter(user=request.user, response=response).first()
+        
+        if existing_vote:
+            # Handle existing vote updates (increment/decrement) based on the vote_type
+            if vote_type == 'upvote':
+                existing_vote.upvote()
+            elif vote_type == 'downvote':
+                existing_vote.downvote()
+        else:
+            # Handle new vote creation
+            new_vote = Vote(user=request.user, response=response, vote_type=vote_type)
+            new_vote.save()
+    
+        # Send a JsonResponse with the updated upvotes and downvotes counts
+        return JsonResponse({'success': True, 'upvotes': response.upvotes, 'downvotes': response.downvotes})
+    
+    except Response.DoesNotExist:
+        return JsonResponse({'success': False, 'error_message': 'Response not found'})
