@@ -17,15 +17,17 @@ from django.contrib import admin
 from django.urls import path, include
 from solarpower import views as solarpower_views
 from django.contrib.auth import views as auth_views
+from forum import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', solarpower_views.home, name='home'),
     path('blog/', solarpower_views.blog, name='blog'),
-    path('forum/', solarpower_views.forum, name='forum'),
+    #path('forum/', solarpower_views.forum, name='forum'),
     path('calculator/', solarpower_views.calculator, name='calculator'),
     path('user_profile/', solarpower_views.user_profile, name='user_profile'),
     path('register/', solarpower_views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('forum/', include('forum.urls', 'forum')),
 ]

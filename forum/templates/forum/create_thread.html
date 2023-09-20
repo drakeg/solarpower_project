@@ -1,0 +1,15 @@
+<!-- forum/templates/forum/create_thread.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Create a New Thread</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Post Thread</button>
+    </form>
+
+    <a href="{% url 'forum:thread_list' %}">Back to Thread List</a>
+{% endblock %}

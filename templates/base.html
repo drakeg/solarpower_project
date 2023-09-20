@@ -12,7 +12,11 @@
         <div class="container">
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'blog' %}">Blog</a>
-            <a href="{% url 'forum' %}">Forum</a>
+            <a href="{% url 'forum:thread_list' %}">Forum</a>
+            {% if thread %}
+                <!-- Link to the original thread if viewing a post -->
+                <a href="{% url 'forum:view_thread' thread.id %}">Back to Original Thread</a>
+            {% endif %}
             <a href="{% url 'calculator' %}">Calculators</a>
             <!-- Add user profile dropdown to the far right -->
             {% if user.is_authenticated %}
