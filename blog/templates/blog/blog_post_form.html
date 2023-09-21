@@ -1,0 +1,13 @@
+<!-- solarpower/templates/solarpower/blog/blog_post_form.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Create a New Blog Post</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Post</button>
+  </form>
+  <a href="{% url 'solarpower:blog_list' %}">Back to Blog List</a>
+{% endblock %}

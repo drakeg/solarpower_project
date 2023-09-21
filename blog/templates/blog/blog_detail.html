@@ -1,0 +1,15 @@
+<!-- solarpower/templates/solarpower/blog/blog_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ blog_post.title }}</h1>
+  {% if blog_post.image %}
+    <img src="{{ blog_post.image.url }}" alt="{{ blog_post.title }}">
+  {% endif %}
+  <p>{{ blog_post.content }}</p>
+  <p>Keywords: {{ blog_post.keywords }}</p>
+  <p>Author: {{ blog_post.author }}</p>
+  <p>Date Published: {{ blog_post.date_published }}</p>
+  <a href="{% url 'solarpower:blog_list' %}">Back to Blog List</a>
+{% endblock %}
