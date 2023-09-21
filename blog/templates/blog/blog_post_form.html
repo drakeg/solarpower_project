@@ -1,4 +1,4 @@
-<!-- solarpower/templates/solarpower/blog/blog_post_form.html -->
+<!-- blog/templates/blog/blog_post_form.html -->
 
 {% extends 'base.html' %}
 
@@ -9,5 +9,5 @@
     {{ form.as_p }}
     <button type="submit">Create Post</button>
   </form>
-  <a href="{% url 'solarpower:blog_list' %}">Back to Blog List</a>
+  <a href="{% url 'blog:blog_list' %}">Back to Blog List</a>
 {% endblock %}

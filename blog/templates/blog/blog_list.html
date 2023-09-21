@@ -7,10 +7,10 @@
   <ul>
     {% for blog_post in blog_posts %}
       <li>
-        <a href="{% url 'solarpower:blog_detail' pk=blog_post.pk %}">{{ blog_post.title }}</a>
+        <a href="{% url 'blog:blog_detail' pk=blog_post.pk %}">{{ blog_post.title }}</a>
         <p>{{ blog_post.date_published }}</p>
       </li>
     {% endfor %}
   </ul>
-  <a href="{% url 'solarpower:create_blog_post' %}">Create a new blog post</a>
+  <a href="{% url 'blog:create_blog_post' %}">Create a new blog post</a>
 {% endblock %}
