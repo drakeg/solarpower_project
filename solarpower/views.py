@@ -9,10 +9,6 @@ from django.contrib.auth.forms import UserCreationForm
 
 logout_view = LogoutView.as_view()
 
-def blog(request):
-    blog_posts = BlogPost.objects.all()
-    return render(request, 'blog.html', {'blog_posts': blog_posts})
-
 def home(request):
     return render(request, 'home.html')
 
