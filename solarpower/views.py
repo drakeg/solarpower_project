@@ -10,7 +10,8 @@ from django.contrib.auth.forms import UserCreationForm
 logout_view = LogoutView.as_view()
 
 def home(request):
-    return render(request, 'home.html')
+    active_page = 'home'
+    return render(request, 'home.html', {'active_page': active_page})
 
 def calculator(request):
     # Add any necessary context data for your calculator page here

@@ -40,6 +40,7 @@ def create_response(request, thread_id):
         form = ResponseForm()
 
     return render(request, 'forum/view_thread.html', {'thread': thread, 'response_form': form})
+
 @login_required
 def view_thread(request, thread_id):
     thread = get_object_or_404(Thread, pk=thread_id)
