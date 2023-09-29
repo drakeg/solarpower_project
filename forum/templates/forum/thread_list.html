@@ -1,24 +1,22 @@
 <!-- forum/templates/forum/thread_list.html -->
 
+<!-- forum_list.html -->
+
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Forum Threads</h1>
-
-    <!-- List of forum threads -->
-    <ul class="thread-list">
+<div class="container">
+    <h1>Forum</h1>
+    <ul class="list-group">
         {% for thread in threads %}
-            <li>
-                <a href="{% url 'forum:view_thread' thread.id %}">{{ thread.title }}</a>
-                <p>Posted by {{ thread.author }} on {{ thread.created_at }}</p>
+            <li class="list-group-item">
+                <h2><a href="{% url 'forum:view_thread' thread.id %}">{{ thread.title }}</a></h2>
+                <p>Author: {{ thread.author }}</p>
+                <p>Date: {{ thread.created_at }}</p>
             </li>
         {% endfor %}
     </ul>
-
-    {% if user.is_authenticated %}
-        <!-- Link to create a new thread -->
-        <a href="{% url 'forum:create_thread' %}" class="create-thread-button">Create a New Thread</a>
-    {% else %}
-        <p><a href="{% url 'login' %}">Log in</a> to create a new thread.</p>
-    {% endif %}
+    <a href="{% url 'forum:create_thread' %}" class="btn btn-primary mt-3">Create Thread</a>
+</div>
 {% endblock %}
+
