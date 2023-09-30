@@ -8,8 +8,9 @@ from .forms import ThreadForm, ResponseForm
 
 @login_required
 def thread_list(request):
+    active_page = 'forum'
     threads = Thread.objects.all()
-    return render(request, 'forum/thread_list.html', {'threads': threads})
+    return render(request, 'forum/thread_list.html', {'threads': threads, 'active_page': active_page})
 
 @login_required
 def create_thread(request):

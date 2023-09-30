@@ -14,8 +14,9 @@ def home(request):
     return render(request, 'home.html', {'active_page': active_page})
 
 def calculator(request):
+    active_page = 'calculator'
     # Add any necessary context data for your calculator page here
-    return render(request, 'calculator.html')
+    return render(request, 'calculator.html', {'active_page': active_page})
 
 def user_profile(request):
     # Add any necessary context data for the user profile page here

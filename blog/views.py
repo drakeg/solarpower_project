@@ -13,7 +13,7 @@ def blog_list(request):
     page = request.GET.get('page')
     blog_posts = paginator.get_page(page)
 
-    return render(request, 'blog/blog_list.html', {'blog_posts': blog_posts})
+    return render(request, 'blog/blog_list.html', {'blog_posts': blog_posts, 'active_page': active_page})
 
 def blog_detail(request, pk):
     active_page = 'blog'
