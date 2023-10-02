@@ -5,7 +5,6 @@ from .models import Thread, Response, Category
 from .forms import ThreadForm, ResponseForm
 from django.core.paginator import Paginator
 
-@login_required
 def thread_list(request):
     active_page = 'forum'
     categories = Category.objects.all()
