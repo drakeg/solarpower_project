@@ -3,13 +3,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{{ blog_post.title }}</h1>
-  {% if blog_post.image %}
-    <img src="{{ blog_post.image.url }}" alt="{{ blog_post.title }}">
-  {% endif %}
-  <p>{{ blog_post.content }}</p>
-  <p>Keywords: {{ blog_post.keywords }}</p>
-  <p>Author: {{ blog_post.author }}</p>
-  <p>Date Published: {{ blog_post.date_published }}</p>
-  <a href="{% url 'blog:blog_list' %}">Back to Blog List</a>
+<div class="container my-5">
+  <article class="card">
+    <div class="card-body">
+      <h1 class="card-title text-center">{{ blog_post.title }}</h1>
+      <p class="card-text text-muted text-center">Published on {{ blog_post.date_published }}</p>
+      <p class="card-text">
+        {% for keyword in blog_post.keywords.all %}
+          <span class="badge badge-secondary">{{ keyword }}</span>
+        {% endfor %}
+      </p>
+      <p class="card-text">{{ blog_post.summary }}</p>
+      <hr>
+      <div class="card-text">{{ blog_post.content }}</div>
+    </div>
+  </article>
+
+  <a href="{% url 'blog:home' %}" class="btn mt-3">Back to Blog List</a>
+</div>
 {% endblock %}

@@ -1,0 +1,164 @@
+/* Add your custom styles here */
+body {
+    background-color: #E4F3E0;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+/* Header styles */
+header {
+    background-color: #5BA45F;
+    color: #fff; /* White text for header */
+    text-shadow: 6px 6px 20px #FFD700; /* Increased offset for a more pronounced effect */
+}
+
+nav.navbar {
+    background-color: #87C36F;
+    color: #fff;
+}
+
+nav.navbar .nav-link {
+    width: 100%;
+    text-align: center;
+    color: #FFFFFF;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Active Navbar Link */
+.navbar-nav .nav-link.active {
+    text-shadow: 0 0 30px #FFD700, 0 0 50px #FFD700, 0 0 75px #FFD700; /* Multiple layers of text shadow for a strong effect */
+    color: #FFFF00 !important; /* Bright yellow text */
+}
+
+/* Navbar Menu Items Hover */
+.navbar-nav .nav-link:hover {
+    background-color: #FFD700; /* Yellow background on hover */
+    color: #000; /* Black text on hover */
+}
+
+.btn {
+    background-color: #FFD700;
+    color: #333;
+}
+
+article {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.pagination a:hover {
+    background-color: #f7f7f7;
+}
+
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+}
+
+.bi {
+    vertical-align: -.125em;
+    fill: currentColor;
+}
+
+h1, h2, h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700; /* Bold */
+}
+
+.card-title {
+    font-size: 28px; /* Adjust as needed */
+}
+
+.text-muted {
+    font-style: italic;
+}
+
+.text-center {
+    text-align: center;
+}
+
+h1.text-center {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Footer styles */
+footer {
+    background-color: #5BA45F;
+    color: #FFFFFF; /* White text for footer */
+}
+
+/* Style the thread list container */
+.thread-list {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  /* Style the thread header */
+  .thread-header {
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr 2fr;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
+  }
+  
+  /* Style individual thread items */
+  .thread-item {
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr 2fr;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Style alternating row backgrounds for better readability */
+  .thread-item:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Style thread title with a link */
+  .thread-item span:nth-child(1) {
+    font-weight: bold;
+    color: #0066CC;
+  }
+  
+  /* Style thread summary */
+  .thread-item span:nth-child(2) {
+    color: #333;
+  }
+  
+  /* Style reply count */
+  .thread-item span:nth-child(3) {
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Style author name */
+  .thread-item span:nth-child(4) {
+    font-weight: bold;
+    color: #009900;
+  }
+
+  a.thread-link {
+    color: #007BFF; /* Link text color */
+    text-decoration: none; /* Remove underlines from links */
+    font-weight: bold; /* Make the link text bold */
+  }
+  
+  a.thread-link:hover {
+    color: #0056b3; /* Change color on hover */
+  }

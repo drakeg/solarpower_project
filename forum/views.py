@@ -1,16 +1,27 @@
 # forum/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from .models import Thread, Response, Vote
+from .models import Thread, Response, Category
 from .forms import ThreadForm, ResponseForm
+from django.core.paginator import Paginator
 
 @login_required
 def thread_list(request):
     active_page = 'forum'
+    categories = Category.objects.all()
+    categories_and_threads = []
+
+    for category in categories:
+        threads = Thread.objects.filter(category=category)
+        categories_and_threads.append((category, threads))
+
+    context = {
+        'categories_and_threads': categories_and_threads,
+        'active_page': active_page
+    }
+
     threads = Thread.objects.all()
-    return render(request, 'forum/thread_list.html', {'threads': threads, 'active_page': active_page})
+    return render(request, 'forum/thread_list.html', context)
 
 @login_required
 def create_thread(request):
@@ -20,21 +31,22 @@ def create_thread(request):
             thread = form.save(commit=False)
             thread.author = request.user
             thread.save()
-            return redirect('forum:thread_list')
+            return redirect('forum:view_thread', thread_id=thread.id)
     else:
         form = ThreadForm()
     return render(request, 'forum/create_thread.html', {'form': form})
 
 @login_required
 def create_response(request, thread_id):
-    thread = Thread.objects.get(pk=thread_id)
-
+    thread = get_object_or_404(Thread, pk=thread_id)
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         if form.is_valid():
             response = form.save(commit=False)
-            response.author = request.user
-            response.thread = thread  # Associate the response with the thread
+            category = thread.category
+            response_content = request.POST['content']
+            author = request.user
+            response = Response(thread=thread, author=author, content=response_content, category=category)
             response.save()
             return redirect('forum:view_thread', thread_id=thread_id)
     else:
@@ -56,31 +68,3 @@ def view_thread(request, thread_id):
     else:
         form = ResponseForm()
     return render(request, 'forum/view_thread.html', {'thread': thread, 'form': form})
-
-@require_POST
-def vote_response(request):
-    response_id = request.GET.get('response_id')  # Retrieve response_id from URL parameter
-    vote_type = request.GET.get('vote_type')  # Retrieve vote_type from URL parameter
-
-    try:
-        response = Response.objects.get(pk=response_id)
-        
-        # Check if the user has already voted for this response
-        existing_vote = Vote.objects.filter(user=request.user, response=response).first()
-        
-        if existing_vote:
-            # Handle existing vote updates (increment/decrement) based on the vote_type
-            if vote_type == 'upvote':
-                existing_vote.upvote()
-            elif vote_type == 'downvote':
-                existing_vote.downvote()
-        else:
-            # Handle new vote creation
-            new_vote = Vote(user=request.user, response=response, vote_type=vote_type)
-            new_vote.save()
-    
-        # Send a JsonResponse with the updated upvotes and downvotes counts
-        return JsonResponse({'success': True, 'upvotes': response.upvotes, 'downvotes': response.downvotes})
-    
-    except Response.DoesNotExist:
-        return JsonResponse({'success': False, 'error_message': 'Response not found'})

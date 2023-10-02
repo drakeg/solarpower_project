@@ -1,22 +1,50 @@
-<!-- forum/templates/forum/thread_list.html -->
-
-<!-- forum_list.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Forum</h1>
-    <ul class="list-group">
-        {% for thread in threads %}
-            <li class="list-group-item">
-                <h2><a href="{% url 'forum:view_thread' thread.id %}">{{ thread.title }}</a></h2>
-                <p>Author: {{ thread.author }}</p>
-                <p>Date: {{ thread.created_at }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'forum:create_thread' %}" class="btn btn-primary mt-3">Create Thread</a>
-</div>
+  <div class="container">
+    {% for category, threads in categories_and_threads %}
+      {% if threads %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th colspan="4">{{ category.name }}</th>
+          </tr>
+          <tr>
+            <th>Title</th>
+            <th>Summary</th>
+            <th># Replies</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for thread in threads %}
+            <tr>
+              <td><a href="{% url 'forum:view_thread' thread.id %}" class="thread-link">{{ thread.title }}</a></td>
+              <td>{{ thread.content|truncatewords:15 }}</td>
+              <td>{{ thread.response_set.count }}</td>
+              <td>{{ thread.author }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span class="step-links">
+          {% if threads.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ threads.previous_page_number }}">previous</a>
+          {% endif %}
+          <span class="current-page">{{ threads.number }}</span>
+          {% if threads.has_next %}
+            <a href="?page={{ threads.next_page_number }}">next</a>
+            <a href="?page={{ threads.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+      {% endif %}
+    {% endfor %}
+    
+    {% if user.is_authenticated %}
+      <a href="{% url 'forum:create_thread' %}" class="btn btn-primary mt-3">Create New Thread</a>
+    {% endif %}
+  </div>
 {% endblock %}
-

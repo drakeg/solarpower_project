@@ -3,11 +3,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Create a New Blog Post</h1>
-  <form method="post" enctype="multipart/form-data">
+<div class="container my-5">
+  <h1>Create Blog Post</h1>
+  <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Post</button>
+    
+    <!-- Title -->
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
+    </div>
+    
+    <!-- Content -->
+    <div class="mb-3">
+      <label for="content" class="form-label">Content</label>
+      <textarea class="form-control" id="content" name="content" rows="5" placeholder="Enter content" required></textarea>
+    </div>
+    
+    <!-- Keywords -->
+    <div class="mb-3">
+      <label for="keywords" class="form-label">Keywords (comma-separated)</label>
+      <input type="text" class="form-control" id="keywords" name="keywords" placeholder="e.g., keyword1, keyword2">
+    </div>
+    
+    <!-- Image -->
+    <div class="mb-3">
+      <label for="image" class="form-label">Image</label>
+      <input type="file" class="form-control" id="image" name="image">
+    </div>
+    
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Create Post</button>
   </form>
-  <a href="{% url 'blog:blog_list' %}">Back to Blog List</a>
+</div>
 {% endblock %}

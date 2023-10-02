@@ -3,40 +3,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-5">
-  <h1>Blog</h1>
-    <div class="row mb-2">
-      {% for blog_post in blog_posts %}
-      <div class="col-md-6">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">{{ blog_post.title }}</h5>
-              <p class="card-text">{{ blog_post.date_published }}</p>
-              <a href="{% url 'blog:blog_detail' blog_post.id %}" class="btn btn-primary">Read More</a>
-          </div>
-        </div>            
+  <div class="row mb-2">
+    {% for blog_post in blog_posts %}
+    <div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          {% if blog_post.keywords_list %}
+            <strong class="d-inline-block mb-2 text-primary-emphasis">{{ blog_post.keywords_list|join:', ' }}</strong>
+          {% endif %}
+          <h3 class="mb-0">{{ blog_post.title }}</h3>
+          <div class="mb-1 text-body-secondary">{{ blog_post.date_published }}</div>
+          <p class="card-text mb-auto">{{ blog_post.summary }}</p>
+          <a href="{% url 'blog:blog_detail' blog_post.id %}" class="icon-link gap-1 icon-link-hover stretched-link">
+            Continue reading
+            <svg class="bi"><use xlink:href="#chevron-right"/></svg>
+          </a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+          <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+        </div>
       </div>
-      {% endfor %}
     </div>
-
-    <div class="pagination">
-      <span class="step-links">
-          {% if blog_posts.has_previous %}
-              <a href="?page=1">&laquo; first</a>
-              <a href="?page={{ blog_posts.previous_page_number }}">previous</a>
-          {% endif %}
-          
-          <span class="current-page">
-              Page {{ blog_posts.number }} of {{ blog_posts.paginator.num_pages }}.
-          </span>
-          
-          {% if blog_posts.has_next %}
-              <a href="?page={{ blog_posts.next_page_number }}">next</a>
-              <a href="?page={{ blog_posts.paginator.num_pages }}">last &raquo;</a>
-          {% endif %}
-      </span>
+    {% endfor %}
   </div>
 
-  <a href="{% url 'blog:create_blog_post' %}">Create a new blog post</a>
-</div>
+  <!-- Pagination -->
+  <div class="pagination mt-4 d-flex justify-content-center">
+    {% if blog_posts.has_previous %}
+      <a href="?page=1">&laquo; first</a>
+      <a href="?page={{ blog_posts.previous_page_page_number}}" class="px-3 py-1 border">« Prev</a>
+    {% endif %}
+
+    {% for i in blog_posts.paginator.page_range %}
+      {% if blog_posts.number == i %}
+        <span class="px-3 py-1 border">{{ i }}</span>
+      {% elif i > blog_posts.number|add:'-3' and i < blog_posts.number|add:'3' %}
+          <a href="?page={{ i }}" class="px-3 py-1 border">{{ i }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if blog_posts.paginator.num_pages > blog_posts.number|add:'3' %}
+      <span class="px-3 py-1 border">...</span>
+    {% endif %}
+
+    <!-- Add more page numbers as needed -->
+    {% if blog_posts.has_next %}
+      <a href="?page={{ blog_posts.next_page_number }}">next</a>
+      <a href="#" class="px-3 py-1 border">Next »</a>
+    {% endif %}
+  </div>
 {% endblock %}

@@ -6,6 +6,7 @@
     <h1>{{ thread.title }}</h1>
 
     <p>{{ thread.content }}</p>
+    <p>{{ thread.category }}</p>
     <p>Posted by {{ thread.author }} on {{ thread.created_at }}</p>
 
     <!-- List of responses -->
@@ -14,10 +15,6 @@
             <div class="response">
                 <p>{{ response.content }}</p>
                 <p>Posted by {{ response.author }} on {{ response.created_at }}</p>
-                
-                <!-- Upvote and downvote buttons -->
-                <button class="upvote-btn{% if request.user.is_authenticated and request.user in response.upvoted_by.all %} voted{% endif %}" data-response-id="{{ response.id }}" data-vote-type="upvote">Upvote ({{ response.upvotes }})</button>
-                <button class="downvote-btn{% if request.user.is_authenticated and request.user in response.downvoted_by.all %} voted{% endif %}" data-response-id="{{ response.id }}" data-vote-type="downvote">Downvote ({{ response.downvotes }})</button>
             </div>
         {% endfor %}
     </div>
