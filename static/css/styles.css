@@ -94,12 +94,6 @@ h1.text-center {
     font-weight: bold;
 }
 
-/* Footer styles */
-footer {
-    background-color: #5BA45F;
-    color: #FFFFFF; /* White text for footer */
-}
-
 /* Style the thread list container */
 .thread-list {
     width: 100%;
@@ -202,4 +196,12 @@ h2 {
 .reply-list {
     list-style: none;
     padding: 0;
+}
+
+/* Sticky Footer */
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #5BA45F; /* Adjust the background color as needed */
 }
