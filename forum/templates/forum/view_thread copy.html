@@ -1,0 +1,36 @@
+<!-- forum/templates/forum/view_thread.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ thread.title }}</h1>
+
+    <p>{{ thread.content }}</p>
+    <p>{{ thread.category }}</p>
+    <p>Posted by {{ thread.author }} on {{ thread.created_at }}</p>
+
+    <!-- List of responses -->
+    <div class="response-list">
+        {% for response in thread.response_set.all %}
+            <div class="response">
+                <p>{{ response.content }}</p>
+                <p>Posted by {{ response.author }} on {{ response.created_at }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Form to post a response -->
+    {% if user.is_authenticated %}
+        <h2>Post a Response</h2>
+        <form method="post" action="{% url 'forum:create_response' thread.id %}">
+            {% csrf_token %}
+            {{ response_form.as_p }}
+            <button type="submit">Post Response</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to post a response.</p>
+    {% endif %}
+    
+    <a href="{% url 'forum:thread_list' %}">Back to Thread List</a>
+</div>
+{% endblock %}

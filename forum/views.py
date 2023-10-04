@@ -24,6 +24,7 @@ def thread_list(request):
 
 @login_required
 def create_thread(request):
+    active_page = 'forum'
     if request.method == 'POST':
         form = ThreadForm(request.POST)
         if form.is_valid():
@@ -33,37 +34,51 @@ def create_thread(request):
             return redirect('forum:view_thread', thread_id=thread.id)
     else:
         form = ThreadForm()
-    return render(request, 'forum/create_thread.html', {'form': form})
+    return render(request, 'forum/create_thread.html', {'form': form, 'active_page': active_page})
 
 @login_required
 def create_response(request, thread_id):
+    active_page = 'forum'
+    # Fetch the original thread
     thread = get_object_or_404(Thread, pk=thread_id)
+
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         if form.is_valid():
-            response = form.save(commit=False)
-            category = thread.category
-            response_content = request.POST['content']
-            author = request.user
-            response = Response(thread=thread, author=author, content=response_content, category=category)
+            # Create a new response and set its category to the same as the original thread
+            response = Response(
+                content=form.cleaned_data['content'],
+                author=request.user,
+                thread=thread,
+                category=thread.category  # Set response's category to the thread's category
+            )
             response.save()
+
+            # Redirect to the thread detail page or any other appropriate page
             return redirect('forum:view_thread', thread_id=thread_id)
     else:
         form = ResponseForm()
 
-    return render(request, 'forum/view_thread.html', {'thread': thread, 'response_form': form})
+    return render(request, 'forum/response_form.html', {'form': form, 'active_page': active_page})
 
-@login_required
 def view_thread(request, thread_id):
+    active_page='forum'
     thread = get_object_or_404(Thread, pk=thread_id)
+    responses = Response.objects.filter(thread=thread).order_by('-created_at')
+    
     if request.method == 'POST':
         form = ResponseForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.thread = thread
-            post.save()
-            return redirect('view_thread', thread_id)
+            # Save the response and associate it with the thread
+            new_response = Response(
+                content=form.cleaned_data['content'],
+                thread=thread,
+                author=request.user
+            )
+            new_response.save()
+            return redirect('forum:view_thread', thread_id=thread.id)
+
     else:
         form = ResponseForm()
-    return render(request, 'forum/view_thread.html', {'thread': thread, 'form': form})
+
+    return render(request, 'forum/view_thread.html', {'thread': thread, 'responses': responses, 'form': form, 'active_page': active_page})

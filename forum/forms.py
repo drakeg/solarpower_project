@@ -16,3 +16,4 @@ class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = ['content']
+        widgets = {'content': forms.Textarea(attrs={'class': 'form-control', 'rows': '4'})}

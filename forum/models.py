@@ -22,7 +22,6 @@ class Thread(models.Model):
         return self.title
 
 class Response(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()

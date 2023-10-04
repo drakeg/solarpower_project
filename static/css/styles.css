@@ -162,3 +162,44 @@ footer {
   a.thread-link:hover {
     color: #0056b3; /* Change color on hover */
   }
+
+  /* Add this CSS to your existing stylesheet or a new one */
+
+/* Style for the thread title */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Style for thread and reply rows */
+.thread-row,
+.reply-row {
+    display: flex;
+    justify-content: space-between; /* Fill the width */
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Style for thread and reply content */
+.thread-content,
+.reply-content {
+    flex: 2;
+    padding-right: 10px;
+}
+
+/* Style for thread and reply info (author and date) */
+.thread-info,
+.reply-info {
+    flex: 1;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+}
+
+/* Style for the thread and reply lists */
+.reply-list {
+    list-style: none;
+    padding: 0;
+}

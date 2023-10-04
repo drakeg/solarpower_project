@@ -1,36 +1,35 @@
-<!-- forum/templates/forum/view_thread.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ thread.title }}</h1>
-
-    <p>{{ thread.content }}</p>
-    <p>{{ thread.category }}</p>
-    <p>Posted by {{ thread.author }} on {{ thread.created_at }}</p>
-
-    <!-- List of responses -->
-    <div class="response-list">
-        {% for response in thread.response_set.all %}
-            <div class="response">
-                <p>{{ response.content }}</p>
-                <p>Posted by {{ response.author }} on {{ response.created_at }}</p>
-            </div>
-        {% endfor %}
-    </div>
-
-    <!-- Form to post a response -->
-    {% if user.is_authenticated %}
-        <h2>Post a Response</h2>
-        <form method="post" action="{% url 'forum:create_response' thread.id %}">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h2>{{ thread.title }}</h2>
+        <hr>
+        <div class="thread">
+          <div class="thread-row">
+            <div class="thread-content">{{ thread.content|safe }}</div>
+            <div class="thread-info">{{ thread.author }} | {{ thread.created_at|date:"F d, Y" }}</div>
+          </div>
+        </div>
+        <h3>Post a Response</h3>
+        <form method="post">
             {% csrf_token %}
-            {{ response_form.as_p }}
-            <button type="submit">Post Response</button>
-        </form>
-    {% else %}
-        <p><a href="{% url 'login' %}">Log in</a> to post a response.</p>
-    {% endif %}
-    
-    <a href="{% url 'forum:thread_list' %}">Back to Thread List</a>
-</div>
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit Response</button>
+        </form>        
+        <hr>
+        <ul class="replies">
+          {% for response in responses %}
+            <li class="reply-list">
+              <div class="reply-row">
+                <div class="reply-content">{{ response.content|safe }}</div>
+                <div class="reply-info">{{ response.author }} | {{ response.created_at|date:"F d, Y" }}</div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
 {% endblock %}
