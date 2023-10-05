@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- calculators/solar_savings_calculator.html -->
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        {{ form.current_energy_cost.label_tag }}
+        {{ form.current_energy_cost }}
+        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.current_energy_cost.help_text }}">?</a>
+    </div>
+    
+    <div class="mb-3">
+        {{ form.solar_system_cost.label_tag }}
+        {{ form.solar_system_cost }}
+        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.solar_system_cost.help_text }}">?</a>
+    </div>
+    
+    <div class="mb-3">
+        {{ form.solar_system_lifetime.label_tag }}
+        {{ form.solar_system_lifetime }}
+        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.solar_system_lifetime.help_text }}">?</a>
+    </div>
+    
+    <button type="submit">Calculate Savings</button>
+</form>
+
+{% if savings_result %}
+
+
+<h2>Results</h2>
+<p>Your potential savings from using a solar system:</p>
+<ul>
+    <li>Total Savings: ${{ savings_result }}</li>
+</ul>
+<p>This calculation is based on the following assumptions:</p>
+<ul>
+    <li>Your current monthly energy cost is ${{ form.cleaned_data.current_energy_cost }}.</li>
+    <li>The total cost of the solar system is ${{ form.cleaned_data.solar_system_cost }}.</li>
+    <li>The expected lifetime of the solar system is {{ form.cleaned_data.solar_system_lifetime }} years.</li>
+</ul>
+<p>The annual savings are calculated as the difference between your current monthly energy cost and the monthly cost of the solar system spread over its lifetime.</p>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize Bootstrap popovers
+    $(document).ready(function () {
+        $('[data-bs-toggle="popover"]').popover();
+    });
+</script>
+{% endblock %}

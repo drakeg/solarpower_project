@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'solarpower',
     'forum',
     'blog',
+    'calculators',
     'django_extensions',
 ]
 
