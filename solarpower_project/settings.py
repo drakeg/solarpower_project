@@ -31,7 +31,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'drakeg.pythonanywhere.com'
+    'drakeg.pythonanywhere.com',
+    '127.0.0.1'
 ]
 
 

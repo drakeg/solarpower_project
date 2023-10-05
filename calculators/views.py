@@ -3,6 +3,7 @@ from .forms import SolarSavingsForm
 from .utilities import calculate_savings
 
 def solar_savings_calculator(request):
+    active_page = 'calculators'
     if request.method == 'POST':
         form = SolarSavingsForm(request.POST)
         if form.is_valid():
@@ -14,4 +15,5 @@ def solar_savings_calculator(request):
     return render(request, 'calculators/solar_savings_calculator.html', {
         'form': form,
         'savings_result': savings_result,
+        'active_page': active_page
     })

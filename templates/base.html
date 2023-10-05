@@ -33,7 +33,7 @@
               <a class="nav-link{% if active_page == 'forum' %} active{% endif %}" href="{% url 'forum:thread_list' %}">Forum</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Calculators</a>
+              <a class="nav-link dropdown-toggle{% if active_page == 'calculators' %} active{% endif %}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Calculators</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{% url 'calculators:solar_savings_calculator' %}">Solar Savings</a></li>
               </ul>
