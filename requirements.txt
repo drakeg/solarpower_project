@@ -23,6 +23,6 @@ sqlparse==0.5.4
 tqdm==4.66.3
 typing_extensions==4.8.0
 tzdata==2023.3
-urllib3==2.6.3
+urllib3==2.7.0
 setuptools>=78.1.1 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
