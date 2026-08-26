@@ -3,7 +3,7 @@ breadability==0.1.20
 certifi==2024.7.4
 chardet==5.2.0
 charset-normalizer==3.3.0
-click==8.1.7
+click==8.5.0
 Django==6.0.6
 django-extensions==3.2.3
 docopt==0.6.2
