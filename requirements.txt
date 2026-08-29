@@ -1,5 +1,5 @@
 asgiref==3.7.2
-breadability==0.1.20
+breadability==0.1.21
 certifi==2024.7.4
 chardet==5.2.0
 charset-normalizer==3.3.0
