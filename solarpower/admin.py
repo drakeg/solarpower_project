@@ -1,2 +1,1 @@
-# admin.py in the blog app
-from django.contrib import admin
+# Admin registrations for the solarpower app.
