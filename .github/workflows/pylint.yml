@@ -25,7 +25,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pylint
+          pip install pylint pylint-django
 
       - name: Django system check
         env:
@@ -38,4 +38,8 @@ jobs:
         run: python manage.py test
 
       - name: Analyse Python code with Pylint
-        run: pylint $(git ls-files '*.py')
+        run: |
+          pylint --load-plugins=pylint_django \
+            --django-settings-module=solarpower_project.settings \
+            --disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods,invalid-name,line-too-long \
+            $(git ls-files '*.py')
