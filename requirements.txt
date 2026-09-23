@@ -22,7 +22,7 @@ smart-open==6.4.0
 sqlparse==0.6.0
 tqdm==4.66.3
 typing_extensions==4.8.0
-tzdata==2023.3
+tzdata==2023.4
 urllib3==2.7.0
 setuptools>=78.1.1 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
