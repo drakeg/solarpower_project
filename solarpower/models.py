@@ -1,9 +1,7 @@
 # models.py in the solarpower app
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # Add fields for user profiles (e.g., bio, profile picture, etc.)
-
-# Add more models as needed for calculators, user messages, etc.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
