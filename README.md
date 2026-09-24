@@ -38,7 +38,21 @@ Run Django's system checks:
 docker compose run --rm web python manage.py check
 ```
 
-The Compose configuration supplies development-only fallback secret keys. To test with your own value, set `SECRET_KEY` in the shell or a local `.env` file. Do not use the fallback values in production.
+The Compose configuration supplies development-only fallback settings. To test with your own values, set them in the shell or a local `.env` file. Do not use the Compose fallback secret keys in production.
+
+Core Django configuration is environment-driven:
+
+- `SECRET_KEY` is required outside the Compose development/test fallbacks.
+- `DEBUG` defaults to `False`; accepted true values are `1`, `true`, `yes`, and `on` (case-insensitive).
+- `ALLOWED_HOSTS` is a comma-separated list. Its non-Compose default is `drakeg.pythonanywhere.com,127.0.0.1`; Compose explicitly adds `localhost` for local browser access.
+
+Example `.env` for direct local development:
+
+```text
+SECRET_KEY=replace-with-a-generated-secret
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
 
 Stop the local stack with:
 
