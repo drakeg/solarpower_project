@@ -33,11 +33,11 @@ Status: Complete / ongoing maintenance
 - Require the complete CI and Docker path for dependency changes.
 - Keep automated dependency PRs actionable rather than accumulating stale duplicates.
 
-## Current sprint
+## Completed application-quality work
 
 ### Sprint 3 — Meaningful application test coverage
 
-Status: Planned
+Status: Complete
 
 Goals:
 
@@ -61,11 +61,24 @@ Exit criteria:
 - all Python 3.12/3.13 and Docker Compose CI checks pass;
 - test commands and any fixtures/factories are documented.
 
-## Candidate future sprints
+## Current sprint
 
 ### Sprint 4 — Configuration and security hardening
 
+Status: Planned
+
 Review environment-driven `DEBUG`, `ALLOWED_HOSTS`, secret handling, production-safe defaults, and deployment checks.
+
+Exit criteria:
+
+- `DEBUG`, `SECRET_KEY`, and `ALLOWED_HOSTS` have explicit environment-driven behavior;
+- local Docker development works with `localhost` without weakening production defaults;
+- deployment/security-oriented Django checks are incorporated where appropriate;
+- configuration behavior has automated tests;
+- README/development documentation describes required environment variables;
+- the complete Python and Docker CI matrix passes.
+
+## Candidate future sprints
 
 ### Sprint 5 — Calculator quality and solar-domain features
 
