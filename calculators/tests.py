@@ -11,7 +11,7 @@ class SolarSavingsCalculatorTests(TestCase):
         response = self.client.get(reverse('calculators:solar_savings_calculator'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertIsNone(response.context['savings_result'])
+        self.assertIsNone(response.context['savings_breakdown'])
         self.assertEqual(response.context['active_page'], 'calculators')
 
     def test_valid_post_calculates_savings(self):
@@ -25,7 +25,11 @@ class SolarSavingsCalculatorTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['savings_result'], Decimal('24000.00'))
+        self.assertEqual(response.context['savings_breakdown']['annual_utility_cost'], Decimal('2400.00'))
+        self.assertEqual(response.context['savings_breakdown']['annualized_system_cost'], Decimal('1200.00'))
+        self.assertEqual(response.context['savings_breakdown']['annual_net_savings'], Decimal('1200.00'))
+        self.assertEqual(response.context['savings_breakdown']['lifetime_utility_cost'], Decimal('48000.00'))
+        self.assertEqual(response.context['savings_breakdown']['lifetime_net_savings'], Decimal('24000.00'))
 
     def test_invalid_post_does_not_reference_unassigned_result(self):
         response = self.client.post(
@@ -39,7 +43,7 @@ class SolarSavingsCalculatorTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['form'].is_valid())
-        self.assertIsNone(response.context['savings_result'])
+        self.assertIsNone(response.context['savings_breakdown'])
 
     def test_negative_costs_and_zero_lifetime_are_rejected(self):
         response = self.client.post(
@@ -53,7 +57,7 @@ class SolarSavingsCalculatorTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['form'].is_valid())
-        self.assertIsNone(response.context['savings_result'])
+        self.assertIsNone(response.context['savings_breakdown'])
 
 
 class CalculateSavingsTests(TestCase):
@@ -66,4 +70,8 @@ class CalculateSavingsTests(TestCase):
             },
         )
 
-        self.assertEqual(result, Decimal('24000.00'))
+        self.assertEqual(result['annual_utility_cost'], Decimal('2400.00'))
+        self.assertEqual(result['annualized_system_cost'], Decimal('1200.00'))
+        self.assertEqual(result['annual_net_savings'], Decimal('1200.00'))
+        self.assertEqual(result['lifetime_utility_cost'], Decimal('48000.00'))
+        self.assertEqual(result['lifetime_net_savings'], Decimal('24000.00'))
