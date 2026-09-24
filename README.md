@@ -20,10 +20,23 @@ Start the application:
 docker compose up --build
 ```
 
-Then open `http://localhost:8000`. To use a different host port, set `APP_PORT`, for example:
+Then open `http://localhost:8000`. The host port and the port Django listens on inside the container can be configured independently:
 
 ```bash
 APP_PORT=8080 docker compose up --build
+```
+
+The command above maps host port `8080` to the default container port `8000`. To change the container's listening port as well, set `CONTAINER_PORT`:
+
+```bash
+APP_PORT=8080 CONTAINER_PORT=9000 docker compose up --build
+```
+
+This maps host port `8080` to container port `9000`, with Django listening on `0.0.0.0:9000`. You can also put these values in `.env`:
+
+```text
+APP_PORT=8080
+CONTAINER_PORT=9000
 ```
 
 Run the Django test suite in an isolated one-off container:

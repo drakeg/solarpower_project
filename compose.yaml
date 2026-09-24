@@ -3,14 +3,15 @@ services:
     build:
       context: .
     ports:
-      - "${APP_PORT:-8000}:8000"
+      - "${APP_PORT:-8000}:${CONTAINER_PORT:-8000}"
     environment:
       SECRET_KEY: "${SECRET_KEY:-docker-compose-local-development-key}"
       DEBUG: "${DEBUG:-True}"
       ALLOWED_HOSTS: "${ALLOWED_HOSTS:-localhost,127.0.0.1}"
+      CONTAINER_PORT: "${CONTAINER_PORT:-8000}"
     volumes:
       - .:/app
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:${CONTAINER_PORT}"
 
   test:
     build:
