@@ -45,3 +45,13 @@ Stop the local stack with:
 ```bash
 docker compose down
 ```
+
+## Development documentation
+
+Project development conventions and roadmap are maintained in:
+
+- `docs/DEVELOPMENT.md` — workflow, Definition of Done, PR and documentation expectations.
+- `docs/CODING_STANDARDS.md` — Python/Django, testing, dependency, front-end, and commit standards.
+- `docs/SPRINTS.md` — completed, current, and planned sprint work.
+
+These documents are intended to remain current as part of normal feature and maintenance PRs.
