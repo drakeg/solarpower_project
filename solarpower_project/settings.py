@@ -43,6 +43,19 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+SECURE_SSL_REDIRECT = os.environ.get(
+    'SECURE_SSL_REDIRECT', 'False'
+).strip().lower() in {'1', 'true', 'yes', 'on'}
+SESSION_COOKIE_SECURE = os.environ.get(
+    'SESSION_COOKIE_SECURE', 'False'
+).strip().lower() in {'1', 'true', 'yes', 'on'}
+CSRF_COOKIE_SECURE = os.environ.get(
+    'CSRF_COOKIE_SECURE', 'False'
+).strip().lower() in {'1', 'true', 'yes', 'on'}
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
+
 
 # Application definition
 
