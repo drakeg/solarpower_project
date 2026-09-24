@@ -6,6 +6,8 @@ services:
       - "${APP_PORT:-8000}:8000"
     environment:
       SECRET_KEY: "${SECRET_KEY:-docker-compose-local-development-key}"
+      DEBUG: "${DEBUG:-True}"
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS:-localhost,127.0.0.1}"
     volumes:
       - .:/app
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
@@ -15,6 +17,8 @@ services:
       context: .
     environment:
       SECRET_KEY: "${SECRET_KEY:-docker-compose-test-key}"
+      DEBUG: "${DEBUG:-False}"
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS:-localhost,127.0.0.1,testserver}"
     command: python manage.py test
     profiles:
       - test

@@ -28,12 +28,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # CHANGE THIS (I'll secure it more eventually)
 #SECRET_KEY = 'django-insecure-pjn54_^^vurcnx!grv8c56=-r_lm#kiyx@&!x@%2qh_0%%s@4#'
 SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise RuntimeError('SECRET_KEY environment variable is required')
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').strip().lower() in {'1', 'true', 'yes', 'on'}
 
 ALLOWED_HOSTS = [
-    'drakeg.pythonanywhere.com',
-    '127.0.0.1'
+    host.strip()
+    for host in os.environ.get(
+        'ALLOWED_HOSTS',
+        'drakeg.pythonanywhere.com,127.0.0.1',
+    ).split(',')
+    if host.strip()
 ]
 
 
