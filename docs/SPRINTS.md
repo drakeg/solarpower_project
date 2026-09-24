@@ -61,11 +61,11 @@ Exit criteria:
 - all Python 3.12/3.13 and Docker Compose CI checks pass;
 - test commands and any fixtures/factories are documented.
 
-## Current sprint
+## Completed configuration/security work
 
 ### Sprint 4 — Configuration and security hardening
 
-Status: Planned
+Status: Complete
 
 Review environment-driven `DEBUG`, `ALLOWED_HOSTS`, secret handling, production-safe defaults, and deployment checks.
 
@@ -78,11 +78,22 @@ Exit criteria:
 - README/development documentation describes required environment variables;
 - the complete Python and Docker CI matrix passes.
 
-## Candidate future sprints
+## Current sprint
 
 ### Sprint 5 — Calculator quality and solar-domain features
 
+Status: In progress
+
 Audit current calculators for validation, units, edge cases, presentation, and opportunities for practical residential/RV solar calculations.
+
+Initial findings:
+
+- correct the existing lifetime-savings formula so annualized system cost is not divided by 12 twice;
+- reject negative monetary inputs and non-positive system lifetimes;
+- improve result clarity and calculation assumptions;
+- evaluate additional practical residential/RV solar calculations.
+
+## Candidate future sprints
 
 ### Sprint 6 — Forum and community UX
 
