@@ -4,6 +4,9 @@ services:
       context: .
     ports:
       - "${APP_PORT:-8000}:${CONTAINER_PORT:-8000}"
+    env_file:
+      - path: .env
+        required: false
     environment:
       SECRET_KEY: "${SECRET_KEY:-docker-compose-local-development-key}"
       DEBUG: "${DEBUG:-True}"
@@ -16,6 +19,9 @@ services:
   test:
     build:
       context: .
+    env_file:
+      - path: .env
+        required: false
     environment:
       SECRET_KEY: "${SECRET_KEY:-docker-compose-test-key}"
       DEBUG: "${DEBUG:-False}"

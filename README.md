@@ -14,6 +14,14 @@ Copy/paste the output of this command into a .env file.
 
 Docker Compose provides a reproducible local environment without installing the project's Python dependencies on the host.
 
+Create your local configuration from the committed template (optional, but recommended):
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` for your environment. The real `.env` is ignored by Git and must not be committed. Docker Compose automatically uses it for variable substitution, and both the `web` and `test` services explicitly load it as their environment file.
+
 Start the application:
 
 ```bash
@@ -52,6 +60,8 @@ docker compose run --rm web python manage.py check
 ```
 
 The Compose configuration supplies development-only fallback settings. To test with your own values, set them in the shell or a local `.env` file. Do not use the Compose fallback secret keys in production.
+
+The complete starter configuration is in `.env.example`. Shell environment variables can still override values when needed.
 
 Core Django configuration is environment-driven:
 
