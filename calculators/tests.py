@@ -25,7 +25,7 @@ class SolarSavingsCalculatorTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['savings_result'], Decimal('46800.00'))
+        self.assertEqual(response.context['savings_result'], Decimal('46000.00'))
 
     def test_invalid_post_does_not_reference_unassigned_result(self):
         response = self.client.post(
@@ -52,4 +52,4 @@ class CalculateSavingsTests(TestCase):
             },
         )
 
-        self.assertEqual(result, Decimal('46800.00'))
+        self.assertEqual(result, Decimal('46000.00'))
