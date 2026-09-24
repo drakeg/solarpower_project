@@ -27,13 +27,17 @@
     <button type="submit">Calculate Savings</button>
 </form>
 
-{% if savings_result %}
+{% if savings_breakdown %}
 
 
 <h2>Results</h2>
-<p>Your potential savings from using a solar system:</p>
+<p>This simplified comparison assumes your current monthly utility cost stays constant and that the entered solar-system cost represents the full lifetime system cost.</p>
 <ul>
-    <li>Total Savings: ${{ savings_result }}</li>
+    <li>Current annual utility cost: ${{ savings_breakdown.annual_utility_cost|floatformat:2 }}</li>
+    <li>Solar system cost per year of expected life: ${{ savings_breakdown.annualized_system_cost|floatformat:2 }}</li>
+    <li>Estimated annual net savings: ${{ savings_breakdown.annual_net_savings|floatformat:2 }}</li>
+    <li>Utility cost over the system lifetime: ${{ savings_breakdown.lifetime_utility_cost|floatformat:2 }}</li>
+    <li><strong>Estimated lifetime net savings: ${{ savings_breakdown.lifetime_net_savings|floatformat:2 }}</strong></li>
 </ul>
 <p>This calculation is based on the following assumptions:</p>
 <ul>
@@ -41,7 +45,7 @@
     <li>The total cost of the solar system is ${{ form.cleaned_data.solar_system_cost }}.</li>
     <li>The expected lifetime of the solar system is {{ form.cleaned_data.solar_system_lifetime }} years.</li>
 </ul>
-<p>The annual savings are calculated as the difference between your current monthly energy cost and the monthly cost of the solar system spread over its lifetime.</p>
+<p>The estimate does not yet model utility-rate inflation, solar production, degradation, financing, incentives, maintenance, battery replacement, or the time value of money.</p>
 
 {% endif %}
 
