@@ -54,6 +54,18 @@ DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
+For an HTTPS production deployment, explicitly enable the security settings only after HTTPS is correctly terminated for the application:
+
+```text
+DEBUG=False
+SECURE_SSL_REDIRECT=True
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+SECURE_HSTS_SECONDS=31536000
+```
+
+HSTS is disabled by default because enabling it before HTTPS is correctly configured can make a deployment inaccessible. When `SECURE_HSTS_SECONDS` is greater than zero, subdomain coverage and preload are enabled as well.
+
 Stop the local stack with:
 
 ```bash
