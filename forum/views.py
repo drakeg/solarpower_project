@@ -55,8 +55,13 @@ def create_response(request, thread_id):
         form = ResponseForm()
     return render(
         request,
-        'forum/response_form.html',
-        {'form': form, 'active_page': active_page},
+        'forum/view_thread.html',
+        {
+            'thread': thread,
+            'responses': Response.objects.filter(thread=thread).order_by('-created_at'),
+            'form': form,
+            'active_page': active_page,
+        },
     )
 
 
