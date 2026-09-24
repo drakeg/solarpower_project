@@ -41,6 +41,32 @@ class EnvironmentSettingsTests(SimpleTestCase):
             ['localhost', '127.0.0.1', 'solar.example.com'],
         )
 
+    def test_https_security_defaults_remain_local_development_safe(self):
+        settings = self.reload_settings({'SECRET_KEY': 'test-secret'})
+
+        self.assertFalse(settings.SECURE_SSL_REDIRECT)
+        self.assertFalse(settings.SESSION_COOKIE_SECURE)
+        self.assertFalse(settings.CSRF_COOKIE_SECURE)
+        self.assertEqual(settings.SECURE_HSTS_SECONDS, 0)
+
+    def test_https_security_can_be_enabled_for_production(self):
+        settings = self.reload_settings(
+            {
+                'SECRET_KEY': 'test-secret',
+                'SECURE_SSL_REDIRECT': 'true',
+                'SESSION_COOKIE_SECURE': 'true',
+                'CSRF_COOKIE_SECURE': 'true',
+                'SECURE_HSTS_SECONDS': '31536000',
+            },
+        )
+
+        self.assertTrue(settings.SECURE_SSL_REDIRECT)
+        self.assertTrue(settings.SESSION_COOKIE_SECURE)
+        self.assertTrue(settings.CSRF_COOKIE_SECURE)
+        self.assertEqual(settings.SECURE_HSTS_SECONDS, 31536000)
+        self.assertTrue(settings.SECURE_HSTS_INCLUDE_SUBDOMAINS)
+        self.assertTrue(settings.SECURE_HSTS_PRELOAD)
+
     def test_missing_secret_key_fails_fast(self):
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaisesRegex(RuntimeError, 'SECRET_KEY'):
