@@ -1,0 +1,9 @@
+.git
+.github
+.DS_Store
+.env
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
