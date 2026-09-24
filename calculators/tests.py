@@ -25,7 +25,7 @@ class SolarSavingsCalculatorTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['savings_result'], Decimal('46000.00'))
+        self.assertEqual(response.context['savings_result'], Decimal('24000.00'))
 
     def test_invalid_post_does_not_reference_unassigned_result(self):
         response = self.client.post(
@@ -34,6 +34,20 @@ class SolarSavingsCalculatorTests(TestCase):
                 'current_energy_cost': '',
                 'solar_system_cost': '24000.00',
                 'solar_system_lifetime': '20',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertIsNone(response.context['savings_result'])
+
+    def test_negative_costs_and_zero_lifetime_are_rejected(self):
+        response = self.client.post(
+            reverse('calculators:solar_savings_calculator'),
+            {
+                'current_energy_cost': '-1.00',
+                'solar_system_cost': '-24000.00',
+                'solar_system_lifetime': '0',
             },
         )
 
@@ -52,4 +66,4 @@ class CalculateSavingsTests(TestCase):
             },
         )
 
-        self.assertEqual(result, Decimal('46000.00'))
+        self.assertEqual(result, Decimal('24000.00'))
