@@ -55,3 +55,27 @@ class SolarSystemSizingForm(forms.Form):
         initial=80,
         help_text='Percentage of nominal battery capacity you plan to use.',
     )
+
+
+class LoadEstimatorForm(forms.Form):
+    appliance_name = forms.CharField(
+        label='Appliance / Load',
+        max_length=100,
+        help_text='A descriptive name such as refrigerator, laptop, or lights.',
+    )
+    watts = forms.DecimalField(
+        label='Power (W)',
+        min_value=0.1,
+        help_text='Running power draw in watts for one device.',
+    )
+    quantity = forms.IntegerField(
+        label='Quantity',
+        min_value=1,
+        initial=1,
+    )
+    hours_per_day = forms.DecimalField(
+        label='Hours Used per Day',
+        min_value=0,
+        max_value=24,
+        help_text='Average number of hours each device runs per day.',
+    )
