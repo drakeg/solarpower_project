@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Daily Load Estimator</h2>
+<p>Calculate the daily energy use of an appliance or group of identical devices. Add the Wh/day values for your loads to estimate the daily energy input for the System Sizing calculator.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Calculate Daily Load</button>
+</form>
+
+{% if load_result %}
+<h3 class="mt-4">Daily Energy Use</h3>
+<p><strong>{{ form.cleaned_data.appliance_name }}</strong></p>
+<ul>
+    <li>{{ load_result.daily_wh|floatformat:1 }} Wh/day</li>
+    <li>{{ load_result.daily_kwh|floatformat:3 }} kWh/day</li>
+</ul>
+<p>Use this result together with your other loads to determine the <strong>Daily Energy Use (Wh)</strong> entered in the System Sizing calculator.</p>
+{% endif %}
+{% endblock %}
