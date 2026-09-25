@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-from .forms import SolarSavingsForm, SolarSystemSizingForm
-from .utilities import calculate_savings, calculate_system_size
+from .forms import LoadEstimatorForm, SolarSavingsForm, SolarSystemSizingForm
+from .utilities import calculate_daily_load, calculate_savings, calculate_system_size
 
 
 def solar_savings_calculator(request):
@@ -35,5 +35,23 @@ def solar_system_sizing_calculator(request):
     return render(request, 'calculators/solar_system_sizing.html', {
         'form': form,
         'sizing_result': sizing_result,
+        'active_page': active_page,
+    })
+
+
+def load_estimator(request):
+    active_page = 'calculators'
+    load_result = None
+
+    if request.method == 'POST':
+        form = LoadEstimatorForm(request.POST)
+        if form.is_valid():
+            load_result = calculate_daily_load(form.cleaned_data)
+    else:
+        form = LoadEstimatorForm()
+
+    return render(request, 'calculators/load_estimator.html', {
+        'form': form,
+        'load_result': load_result,
         'active_page': active_page,
     })
