@@ -42,3 +42,16 @@ def calculate_system_size(input_data):
         'required_nominal_battery_wh': required_nominal_battery_wh,
         'required_battery_ah': required_battery_ah,
     }
+
+
+def calculate_daily_load(input_data):
+    watts = input_data['watts']
+    quantity = input_data['quantity']
+    hours_per_day = input_data['hours_per_day']
+
+    daily_wh = watts * quantity * hours_per_day
+
+    return {
+        'daily_wh': daily_wh,
+        'daily_kwh': daily_wh / 1000,
+    }
