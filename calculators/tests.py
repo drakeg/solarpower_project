@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.test import TestCase
 from django.urls import reverse
 
-from .utilities import calculate_savings
+from .utilities import calculate_savings, calculate_system_size
 
 
 class SolarSavingsCalculatorTests(TestCase):
@@ -75,3 +75,69 @@ class CalculateSavingsTests(TestCase):
         self.assertEqual(result['annual_net_savings'], Decimal('1200.00'))
         self.assertEqual(result['lifetime_utility_cost'], Decimal('48000.00'))
         self.assertEqual(result['lifetime_net_savings'], Decimal('24000.00'))
+
+
+class SolarSystemSizingTests(TestCase):
+    def test_get_displays_system_sizing_form(self):
+        response = self.client.get(
+            reverse('calculators:solar_system_sizing_calculator'),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['sizing_result'])
+        self.assertEqual(response.context['active_page'], 'calculators')
+
+    def test_valid_post_calculates_array_and_battery_requirements(self):
+        response = self.client.post(
+            reverse('calculators:solar_system_sizing_calculator'),
+            {
+                'daily_energy_use': '2400',
+                'peak_sun_hours': '5',
+                'system_efficiency': '80',
+                'autonomy_days': '1',
+                'battery_voltage': '12',
+                'usable_battery_percent': '80',
+            },
+        )
+
+        result = response.context['sizing_result']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result['required_array_watts'], Decimal('600'))
+        self.assertEqual(result['required_usable_battery_wh'], Decimal('2400'))
+        self.assertEqual(result['required_nominal_battery_wh'], Decimal('3000'))
+        self.assertEqual(result['required_battery_ah'], Decimal('250'))
+
+    def test_invalid_sizing_inputs_do_not_calculate(self):
+        response = self.client.post(
+            reverse('calculators:solar_system_sizing_calculator'),
+            {
+                'daily_energy_use': '0',
+                'peak_sun_hours': '0',
+                'system_efficiency': '0',
+                'autonomy_days': '-1',
+                'battery_voltage': '0',
+                'usable_battery_percent': '0',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertIsNone(response.context['sizing_result'])
+
+
+class CalculateSystemSizeTests(TestCase):
+    def test_calculate_system_size_uses_efficiency_and_usable_capacity(self):
+        result = calculate_system_size(
+            {
+                'daily_energy_use': Decimal('2400'),
+                'peak_sun_hours': Decimal('5'),
+                'system_efficiency': Decimal('80'),
+                'autonomy_days': Decimal('1'),
+                'battery_voltage': Decimal('12'),
+                'usable_battery_percent': Decimal('80'),
+            },
+        )
+
+        self.assertEqual(result['required_array_watts'], Decimal('600'))
+        self.assertEqual(result['required_nominal_battery_wh'], Decimal('3000'))
+        self.assertEqual(result['required_battery_ah'], Decimal('250'))

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Solar System Sizing</h2>
+<p>Estimate the solar-array and battery-bank size needed to support a daily energy load.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Calculate System Size</button>
+</form>
+
+{% if sizing_result %}
+<h3 class="mt-4">Estimated Requirements</h3>
+<ul>
+    <li>Solar array: <strong>{{ sizing_result.required_array_watts|floatformat:0 }} W</strong></li>
+    <li>Usable battery energy: {{ sizing_result.required_usable_battery_wh|floatformat:0 }} Wh</li>
+    <li>Nominal battery-bank capacity: <strong>{{ sizing_result.required_nominal_battery_wh|floatformat:0 }} Wh</strong></li>
+    <li>Battery-bank capacity at the selected voltage: <strong>{{ sizing_result.required_battery_ah|floatformat:1 }} Ah</strong></li>
+</ul>
+<p>This is a planning estimate. Actual sizing should account for seasonal solar availability, surge loads, equipment specifications, battery chemistry, temperature, and installation-specific losses.</p>
+{% endif %}
+{% endblock %}

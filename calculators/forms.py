@@ -16,3 +16,42 @@ class SolarSavingsForm(forms.Form):
         min_value=1,
         help_text='Enter the expected lifetime of the solar system in years.'
     )
+
+
+class SolarSystemSizingForm(forms.Form):
+    daily_energy_use = forms.DecimalField(
+        label='Daily Energy Use (Wh)',
+        min_value=1,
+        help_text='Total watt-hours you expect to use in a typical day.',
+    )
+    peak_sun_hours = forms.DecimalField(
+        label='Peak Sun Hours per Day',
+        min_value=0.1,
+        help_text='Average equivalent full-sun hours available per day.',
+    )
+    system_efficiency = forms.DecimalField(
+        label='Overall System Efficiency (%)',
+        min_value=1,
+        max_value=100,
+        initial=80,
+        help_text='Accounts for wiring, controller, inverter, temperature, and other losses.',
+    )
+    autonomy_days = forms.DecimalField(
+        label='Battery Autonomy (days)',
+        min_value=0,
+        initial=1,
+        help_text='Number of days the battery should support the load without solar input.',
+    )
+    battery_voltage = forms.DecimalField(
+        label='Battery Bank Voltage (V)',
+        min_value=1,
+        initial=12,
+        help_text='Nominal battery-bank voltage, such as 12, 24, or 48 volts.',
+    )
+    usable_battery_percent = forms.DecimalField(
+        label='Usable Battery Capacity (%)',
+        min_value=1,
+        max_value=100,
+        initial=80,
+        help_text='Percentage of nominal battery capacity you plan to use.',
+    )
