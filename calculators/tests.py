@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.test import TestCase
 from django.urls import reverse
 
-from .utilities import calculate_savings, calculate_system_size
+from .utilities import calculate_daily_load, calculate_savings, calculate_system_size
 
 
 class SolarSavingsCalculatorTests(TestCase):
@@ -141,3 +141,57 @@ class CalculateSystemSizeTests(TestCase):
         self.assertEqual(result['required_array_watts'], Decimal('600'))
         self.assertEqual(result['required_nominal_battery_wh'], Decimal('3000'))
         self.assertEqual(result['required_battery_ah'], Decimal('250'))
+
+
+class LoadEstimatorTests(TestCase):
+    def test_get_displays_load_estimator_form(self):
+        response = self.client.get(reverse('calculators:load_estimator'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['load_result'])
+        self.assertEqual(response.context['active_page'], 'calculators')
+
+    def test_valid_post_calculates_daily_energy(self):
+        response = self.client.post(
+            reverse('calculators:load_estimator'),
+            {
+                'appliance_name': 'Laptop',
+                'watts': '65',
+                'quantity': '2',
+                'hours_per_day': '8',
+            },
+        )
+
+        result = response.context['load_result']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result['daily_wh'], Decimal('1040'))
+        self.assertEqual(result['daily_kwh'], Decimal('1.04'))
+
+    def test_invalid_load_inputs_do_not_calculate(self):
+        response = self.client.post(
+            reverse('calculators:load_estimator'),
+            {
+                'appliance_name': 'Invalid',
+                'watts': '0',
+                'quantity': '0',
+                'hours_per_day': '25',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertIsNone(response.context['load_result'])
+
+
+class CalculateDailyLoadTests(TestCase):
+    def test_calculate_daily_load_accounts_for_quantity_and_runtime(self):
+        result = calculate_daily_load(
+            {
+                'watts': Decimal('65'),
+                'quantity': 2,
+                'hours_per_day': Decimal('8'),
+            },
+        )
+
+        self.assertEqual(result['daily_wh'], Decimal('1040'))
+        self.assertEqual(result['daily_kwh'], Decimal('1.04'))
