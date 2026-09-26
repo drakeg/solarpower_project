@@ -1,6 +1,7 @@
+from django.forms import formset_factory
 from django.shortcuts import render
 
-from .forms import LoadEstimatorForm, SolarSavingsForm, SolarSystemSizingForm
+from .forms import LoadEstimatorForm, LoadWorksheetForm, SolarSavingsForm, SolarSystemSizingForm
 from .utilities import calculate_daily_load, calculate_savings, calculate_system_size
 
 
@@ -53,5 +54,36 @@ def load_estimator(request):
     return render(request, 'calculators/load_estimator.html', {
         'form': form,
         'load_result': load_result,
+        'active_page': active_page,
+    })
+
+
+def load_worksheet(request):
+    active_page = 'calculators'
+    LoadFormSet = formset_factory(LoadWorksheetForm, extra=5, max_num=20)
+    total_daily_wh = None
+    load_results = []
+
+    if request.method == 'POST':
+        formset = LoadFormSet(request.POST)
+        if formset.is_valid():
+            total_daily_wh = 0
+            for form in formset:
+                if not form.cleaned_data:
+                    continue
+                result = calculate_daily_load(form.cleaned_data)
+                load_results.append({
+                    'name': form.cleaned_data['appliance_name'],
+                    **result,
+                })
+                total_daily_wh += result['daily_wh']
+    else:
+        formset = LoadFormSet()
+
+    return render(request, 'calculators/load_worksheet.html', {
+        'formset': formset,
+        'load_results': load_results,
+        'total_daily_wh': total_daily_wh,
+        'total_daily_kwh': total_daily_wh / 1000 if total_daily_wh is not None else None,
         'active_page': active_page,
     })

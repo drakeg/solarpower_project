@@ -195,3 +195,79 @@ class CalculateDailyLoadTests(TestCase):
 
         self.assertEqual(result['daily_wh'], Decimal('1040'))
         self.assertEqual(result['daily_kwh'], Decimal('1.04'))
+
+
+class LoadWorksheetTests(TestCase):
+    def test_get_displays_multiple_load_rows(self):
+        response = self.client.get(reverse('calculators:load_worksheet'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['formset'].forms), 5)
+        self.assertIsNone(response.context['total_daily_wh'])
+
+    def test_multiple_loads_are_totaled(self):
+        response = self.client.post(
+            reverse('calculators:load_worksheet'),
+            {
+                'form-TOTAL_FORMS': '2',
+                'form-INITIAL_FORMS': '0',
+                'form-MIN_NUM_FORMS': '0',
+                'form-MAX_NUM_FORMS': '20',
+                'form-0-appliance_name': 'Laptop',
+                'form-0-watts': '65',
+                'form-0-quantity': '2',
+                'form-0-hours_per_day': '8',
+                'form-1-appliance_name': 'Lights',
+                'form-1-watts': '10',
+                'form-1-quantity': '4',
+                'form-1-hours_per_day': '5',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['formset'].is_valid())
+        self.assertEqual(response.context['total_daily_wh'], Decimal('1240'))
+        self.assertEqual(response.context['total_daily_kwh'], Decimal('1.24'))
+        self.assertEqual(len(response.context['load_results']), 2)
+
+    def test_blank_rows_are_ignored(self):
+        response = self.client.post(
+            reverse('calculators:load_worksheet'),
+            {
+                'form-TOTAL_FORMS': '2',
+                'form-INITIAL_FORMS': '0',
+                'form-MIN_NUM_FORMS': '0',
+                'form-MAX_NUM_FORMS': '20',
+                'form-0-appliance_name': 'Fan',
+                'form-0-watts': '40',
+                'form-0-quantity': '1',
+                'form-0-hours_per_day': '6',
+                'form-1-appliance_name': '',
+                'form-1-watts': '',
+                'form-1-quantity': '',
+                'form-1-hours_per_day': '',
+            },
+        )
+
+        self.assertTrue(response.context['formset'].is_valid())
+        self.assertEqual(response.context['total_daily_wh'], Decimal('240'))
+        self.assertEqual(len(response.context['load_results']), 1)
+
+    def test_partially_filled_row_is_rejected(self):
+        response = self.client.post(
+            reverse('calculators:load_worksheet'),
+            {
+                'form-TOTAL_FORMS': '1',
+                'form-INITIAL_FORMS': '0',
+                'form-MIN_NUM_FORMS': '0',
+                'form-MAX_NUM_FORMS': '20',
+                'form-0-appliance_name': 'Fan',
+                'form-0-watts': '',
+                'form-0-quantity': '',
+                'form-0-hours_per_day': '',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['formset'].is_valid())
+        self.assertIsNone(response.context['total_daily_wh'])
