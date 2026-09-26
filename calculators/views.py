@@ -84,5 +84,6 @@ def load_worksheet(request):
         'formset': formset,
         'load_results': load_results,
         'total_daily_wh': total_daily_wh,
+        'total_daily_kwh': total_daily_wh / 1000 if total_daily_wh is not None else None,
         'active_page': active_page,
     })
