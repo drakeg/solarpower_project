@@ -53,6 +53,10 @@
         </tr>
     </tfoot>
 </table>
-<p>Enter <strong>{{ total_daily_wh|floatformat:1 }} Wh</strong> as Daily Energy Use in the System Sizing calculator.</p>
+{% if total_daily_wh > 0 %}
+<p><a class="btn btn-success" href="{% url 'calculators:solar_system_sizing_calculator' %}?daily_energy_use={{ total_daily_wh }}">Size a solar system for this load</a></p>
+{% else %}
+<p>Add at least one load with nonzero daily energy use before sizing a system.</p>
+{% endif %}
 {% endif %}
 {% endblock %}
