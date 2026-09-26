@@ -252,3 +252,22 @@ class LoadWorksheetTests(TestCase):
         self.assertTrue(response.context['formset'].is_valid())
         self.assertEqual(response.context['total_daily_wh'], Decimal('240'))
         self.assertEqual(len(response.context['load_results']), 1)
+
+    def test_partially_filled_row_is_rejected(self):
+        response = self.client.post(
+            reverse('calculators:load_worksheet'),
+            {
+                'form-TOTAL_FORMS': '1',
+                'form-INITIAL_FORMS': '0',
+                'form-MIN_NUM_FORMS': '0',
+                'form-MAX_NUM_FORMS': '20',
+                'form-0-appliance_name': 'Fan',
+                'form-0-watts': '',
+                'form-0-quantity': '',
+                'form-0-hours_per_day': '',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['formset'].is_valid())
+        self.assertIsNone(response.context['total_daily_wh'])
