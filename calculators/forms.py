@@ -79,3 +79,9 @@ class LoadEstimatorForm(forms.Form):
         max_value=24,
         help_text='Average number of hours each device runs per day.',
     )
+
+
+class LoadWorksheetForm(LoadEstimatorForm):
+    """Keep unused worksheet rows truly blank for Django formset validation."""
+
+    quantity = forms.IntegerField(label='Quantity', min_value=1)
