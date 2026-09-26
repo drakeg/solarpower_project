@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Daily Load Worksheet</h2>
+<p>Build a daily energy profile from multiple appliances or loads. Leave unused rows blank.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Appliance / Load</th>
+                    <th>Watts</th>
+                    <th>Quantity</th>
+                    <th>Hours / Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.appliance_name }}{{ form.appliance_name.errors }}</td>
+                    <td>{{ form.watts }}{{ form.watts.errors }}</td>
+                    <td>{{ form.quantity }}{{ form.quantity.errors }}</td>
+                    <td>{{ form.hours_per_day }}{{ form.hours_per_day.errors }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate Total Load</button>
+</form>
+
+{% if total_daily_wh != None %}
+<h3 class="mt-4">Daily Load Profile</h3>
+<table class="table">
+    <thead><tr><th>Load</th><th>Wh/day</th><th>kWh/day</th></tr></thead>
+    <tbody>
+        {% for load in load_results %}
+        <tr>
+            <td>{{ load.name }}</td>
+            <td>{{ load.daily_wh|floatformat:1 }}</td>
+            <td>{{ load.daily_kwh|floatformat:3 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <th>{{ total_daily_wh|floatformat:1 }} Wh/day</th>
+            <th>{{ total_daily_wh|floatformat:1 }} Wh/day</th>
+        </tr>
+    </tfoot>
+</table>
+<p>Enter <strong>{{ total_daily_wh|floatformat:1 }} Wh</strong> as Daily Energy Use in the System Sizing calculator.</p>
+{% endif %}
+{% endblock %}
