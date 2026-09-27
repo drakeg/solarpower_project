@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Inverter Sizing</h2>
+<p>Estimate minimum inverter continuous and surge capability from the AC loads you expect to run.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Calculate Inverter Size</button>
+</form>
+
+{% if inverter_result %}
+<h3 class="mt-4">Estimated Inverter Requirements</h3>
+<ul>
+    <li>Recommended continuous capacity: <strong>{{ inverter_result.recommended_continuous_watts|floatformat:0 }} W</strong></li>
+    <li>Minimum surge capability: <strong>{{ inverter_result.required_surge_watts|floatformat:0 }} W</strong></li>
+</ul>
+<p>Select an inverter whose published continuous rating meets or exceeds the continuous requirement and whose surge rating/duration can support the actual startup requirements of your equipment.</p>
+<p>This planning estimate does not replace manufacturer specifications. Motors, compressors, air conditioners, pumps, microwaves, and similar loads can have significant startup or transient requirements.</p>
+{% endif %}
+{% endblock %}

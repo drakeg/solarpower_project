@@ -8,4 +8,5 @@ urlpatterns = [
     path('system-sizing/', views.solar_system_sizing_calculator, name='solar_system_sizing_calculator'),
     path('load-estimator/', views.load_estimator, name='load_estimator'),
     path('load-worksheet/', views.load_worksheet, name='load_worksheet'),
+    path('inverter-sizing/', views.inverter_sizing_calculator, name='inverter_sizing_calculator'),
 ]

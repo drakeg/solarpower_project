@@ -3,7 +3,12 @@ from decimal import Decimal
 from django.test import TestCase
 from django.urls import reverse
 
-from .utilities import calculate_daily_load, calculate_savings, calculate_system_size
+from .utilities import (
+    calculate_daily_load,
+    calculate_inverter_size,
+    calculate_savings,
+    calculate_system_size,
+)
 
 
 class SolarSavingsCalculatorTests(TestCase):
@@ -301,3 +306,64 @@ class LoadWorksheetTests(TestCase):
 
         self.assertEqual(response.context['total_daily_wh'], Decimal('0'))
         self.assertNotContains(response, 'daily_energy_use=0')
+
+
+class InverterSizingTests(TestCase):
+    def test_get_displays_inverter_sizing_form(self):
+        response = self.client.get(reverse('calculators:inverter_sizing_calculator'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['inverter_result'])
+
+    def test_valid_post_calculates_continuous_and_surge_requirements(self):
+        response = self.client.post(
+            reverse('calculators:inverter_sizing_calculator'),
+            {
+                'continuous_load_watts': '1600',
+                'largest_starting_watts': '3000',
+                'continuous_headroom_percent': '25',
+            },
+        )
+
+        result = response.context['inverter_result']
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result['recommended_continuous_watts'], Decimal('2000'))
+        self.assertEqual(result['required_surge_watts'], Decimal('3000'))
+
+    def test_invalid_continuous_load_is_rejected(self):
+        response = self.client.post(
+            reverse('calculators:inverter_sizing_calculator'),
+            {
+                'continuous_load_watts': '0',
+                'largest_starting_watts': '0',
+                'continuous_headroom_percent': '25',
+            },
+        )
+
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertIsNone(response.context['inverter_result'])
+
+
+class CalculateInverterSizeTests(TestCase):
+    def test_inverter_size_applies_headroom_and_starting_load(self):
+        result = calculate_inverter_size(
+            {
+                'continuous_load_watts': Decimal('1600'),
+                'largest_starting_watts': Decimal('3000'),
+                'continuous_headroom_percent': Decimal('25'),
+            },
+        )
+
+        self.assertEqual(result['recommended_continuous_watts'], Decimal('2000'))
+        self.assertEqual(result['required_surge_watts'], Decimal('3000'))
+
+    def test_surge_requirement_never_falls_below_running_load(self):
+        result = calculate_inverter_size(
+            {
+                'continuous_load_watts': Decimal('1600'),
+                'largest_starting_watts': Decimal('1000'),
+                'continuous_headroom_percent': Decimal('25'),
+            },
+        )
+
+        self.assertEqual(result['required_surge_watts'], Decimal('1600'))
