@@ -55,3 +55,17 @@ def calculate_daily_load(input_data):
         'daily_wh': daily_wh,
         'daily_kwh': daily_wh / 1000,
     }
+
+
+def calculate_inverter_size(input_data):
+    continuous_load = input_data['continuous_load_watts']
+    starting_watts = input_data['largest_starting_watts']
+    headroom = input_data['continuous_headroom_percent'] / 100
+
+    recommended_continuous_watts = continuous_load * (1 + headroom)
+    required_surge_watts = max(continuous_load, starting_watts)
+
+    return {
+        'recommended_continuous_watts': recommended_continuous_watts,
+        'required_surge_watts': required_surge_watts,
+    }
