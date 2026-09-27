@@ -78,26 +78,47 @@ Exit criteria:
 - README/development documentation describes required environment variables;
 - the complete Python and Docker CI matrix passes.
 
-## Current sprint
+## Completed solar-domain work
 
 ### Sprint 5 — Calculator quality and solar-domain features
 
-Status: In progress
+Status: Complete
 
-Audit current calculators for validation, units, edge cases, presentation, and opportunities for practical residential/RV solar calculations.
+Delivered:
 
-Initial findings:
+- corrected the lifetime-savings formula and added input validation;
+- replaced the opaque savings result with an auditable cost/savings breakdown and explicit assumptions;
+- added solar-array and battery-bank sizing from daily load, peak sun hours, efficiency, autonomy, voltage, and usable battery capacity;
+- added single-load and multi-load daily energy estimators;
+- connected the load worksheet directly to system sizing;
+- added inverter continuous and surge sizing with configurable headroom;
+- added regression coverage for valid, invalid, edge-case, and calculator-handoff behavior.
 
-- correct the existing lifetime-savings formula so annualized system cost is not divided by 12 twice;
-- reject negative monetary inputs and non-positive system lifetimes;
-- improve result clarity and calculation assumptions;
-- evaluate additional practical residential/RV solar calculations.
+Exit criteria:
 
-## Candidate future sprints
+- calculator inputs use explicit units and reject mathematically invalid values;
+- user-facing results explain assumptions and important limitations;
+- practical residential/RV planning covers daily load, solar array, battery bank, and inverter sizing;
+- calculator workflows have behavioral and utility-level regression tests;
+- the complete CI pipeline passes on the merged Sprint 5 implementation.
+
+## Current sprint
 
 ### Sprint 6 — Forum and community UX
 
+Status: Planned
+
 Review forum permissions, posting flows, moderation fundamentals, navigation, and regression coverage.
+
+Initial goals:
+
+- audit thread and response permissions and authentication behavior;
+- improve thread/response creation and validation UX;
+- establish basic moderation and ownership rules where missing;
+- improve forum navigation and empty/error states;
+- expand regression coverage around posting, permissions, and moderation.
+
+## Candidate future sprints
 
 ### Sprint 7 — Blog/content experience
 
