@@ -31,7 +31,9 @@ def solar_system_sizing_calculator(request):
         if form.is_valid():
             sizing_result = calculate_system_size(form.cleaned_data)
     else:
-        form = SolarSystemSizingForm()
+        form = SolarSystemSizingForm(initial={
+            'daily_energy_use': request.GET.get('daily_energy_use', ''),
+        })
 
     return render(request, 'calculators/solar_system_sizing.html', {
         'form': form,
