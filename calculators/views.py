@@ -1,8 +1,8 @@
 from django.forms import formset_factory
 from django.shortcuts import render
 
-from .forms import LoadEstimatorForm, LoadWorksheetForm, SolarSavingsForm, SolarSystemSizingForm
-from .utilities import calculate_daily_load, calculate_savings, calculate_system_size
+from .forms import InverterSizingForm, LoadEstimatorForm, LoadWorksheetForm, SolarSavingsForm, SolarSystemSizingForm
+from .utilities import calculate_daily_load, calculate_inverter_size, calculate_savings, calculate_system_size
 
 
 def solar_savings_calculator(request):
@@ -87,5 +87,23 @@ def load_worksheet(request):
         'load_results': load_results,
         'total_daily_wh': total_daily_wh,
         'total_daily_kwh': total_daily_wh / 1000 if total_daily_wh is not None else None,
+        'active_page': active_page,
+    })
+
+
+def inverter_sizing_calculator(request):
+    active_page = 'calculators'
+    inverter_result = None
+
+    if request.method == 'POST':
+        form = InverterSizingForm(request.POST)
+        if form.is_valid():
+            inverter_result = calculate_inverter_size(form.cleaned_data)
+    else:
+        form = InverterSizingForm()
+
+    return render(request, 'calculators/inverter_sizing.html', {
+        'form': form,
+        'inverter_result': inverter_result,
         'active_page': active_page,
     })
