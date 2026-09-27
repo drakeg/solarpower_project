@@ -85,3 +85,23 @@ class LoadWorksheetForm(LoadEstimatorForm):
     """Keep unused worksheet rows truly blank for Django formset validation."""
 
     quantity = forms.IntegerField(label='Quantity', min_value=1)
+
+
+class InverterSizingForm(forms.Form):
+    continuous_load_watts = forms.DecimalField(
+        label='Maximum Simultaneous Continuous Load (W)',
+        min_value=1,
+        help_text='Total running watts of the AC loads expected to operate at the same time.',
+    )
+    largest_starting_watts = forms.DecimalField(
+        label='Largest Load Starting / Surge Watts (W)',
+        min_value=0,
+        initial=0,
+        help_text='Starting or surge watts of the largest motor/compressor load.',
+    )
+    continuous_headroom_percent = forms.DecimalField(
+        label='Continuous Capacity Headroom (%)',
+        min_value=0,
+        initial=25,
+        help_text='Extra continuous inverter capacity above the expected simultaneous load.',
+    )
