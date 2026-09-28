@@ -93,3 +93,59 @@ class ForumThreadTests(TestCase):
             response,
             reverse('forum:view_thread', args=[thread.id]),
         )
+
+
+class ForumThreadDetailReplyTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='detail-user',
+            password='test-password',
+        )
+        category = Category.objects.create(name='Off-grid')
+        self.thread = Thread.objects.create(
+            category=category,
+            title='Inverter advice',
+            content='Which inverter should I use?',
+            author=self.user,
+        )
+        self.url = reverse('forum:view_thread', args=[self.thread.id])
+
+    def test_anonymous_visitors_can_read_threads(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Inverter advice')
+
+    def test_anonymous_post_redirects_to_login_without_creating_reply(self):
+        response = self.client.post(
+            self.url,
+            {'content': 'Unauthenticated reply'},
+        )
+
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next={self.url}",
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(Response.objects.count(), 0)
+
+    def test_authenticated_post_creates_reply(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            self.url,
+            {'content': 'Use the simultaneous load and surge ratings.'},
+        )
+
+        self.assertRedirects(response, self.url)
+        self.assertEqual(Response.objects.count(), 1)
+        self.assertEqual(Response.objects.get().author, self.user)
+
+    def test_invalid_authenticated_post_preserves_errors(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url, {'content': ''})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['form'].errors)
+        self.assertEqual(Response.objects.count(), 0)
