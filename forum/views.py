@@ -1,5 +1,6 @@
 # forum/views.py
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ResponseForm, ThreadForm
@@ -71,6 +72,8 @@ def view_thread(request, thread_id):
     responses = Response.objects.filter(thread=thread).order_by('-created_at')
 
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
         form = ResponseForm(request.POST)
         if form.is_valid():
             Response.objects.create(
