@@ -1,6 +1,7 @@
 # forum/views.py
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ResponseForm, ThreadForm
@@ -95,3 +96,42 @@ def view_thread(request, thread_id):
             'active_page': active_page,
         },
     )
+
+
+def _can_manage_thread(user, thread):
+    return user.is_authenticated and (user == thread.author or user.is_staff)
+
+
+@login_required
+def edit_thread(request, thread_id):
+    active_page = 'forum'
+    thread = get_object_or_404(Thread, pk=thread_id)
+    if not _can_manage_thread(request.user, thread):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = ThreadForm(request.POST, instance=thread)
+        if form.is_valid():
+            form.save()
+            return redirect('forum:view_thread', thread_id=thread.id)
+    else:
+        form = ThreadForm(instance=thread)
+
+    return render(
+        request,
+        'forum/edit_thread.html',
+        {'form': form, 'thread': thread, 'active_page': active_page},
+    )
+
+
+@login_required
+def delete_thread(request, thread_id):
+    thread = get_object_or_404(Thread, pk=thread_id)
+    if not _can_manage_thread(request.user, thread):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        thread.delete()
+        return redirect('forum:thread_list')
+
+    return render(request, 'forum/delete_thread.html', {'thread': thread})
