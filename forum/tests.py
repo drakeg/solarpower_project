@@ -192,3 +192,103 @@ class ForumContentEscapingTests(TestCase):
             '&lt;img src=x onerror=alert(&quot;reply&quot;)&gt;',
         )
         self.assertNotContains(response, '<img src=x onerror=alert("reply")>')
+
+
+class ForumThreadManagementTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.owner = user_model.objects.create_user(username='owner', password='password')
+        self.other_user = user_model.objects.create_user(username='other', password='password')
+        self.staff = user_model.objects.create_user(
+            username='moderator',
+            password='password',
+            is_staff=True,
+        )
+        self.category = Category.objects.create(name='Ownership')
+        self.thread = Thread.objects.create(
+            category=self.category,
+            title='Original title',
+            content='Original content',
+            author=self.owner,
+        )
+        self.edit_url = reverse('forum:edit_thread', args=[self.thread.id])
+        self.delete_url = reverse('forum:delete_thread', args=[self.thread.id])
+
+    def test_owner_can_edit_thread(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(
+            self.edit_url,
+            {
+                'title': 'Updated title',
+                'content': 'Updated content',
+                'category': self.category.id,
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse('forum:view_thread', args=[self.thread.id]),
+        )
+        self.thread.refresh_from_db()
+        self.assertEqual(self.thread.title, 'Updated title')
+
+    def test_non_owner_cannot_edit_thread(self):
+        self.client.force_login(self.other_user)
+
+        response = self.client.get(self.edit_url)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_edit_thread(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(self.edit_url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_requires_post_and_owner_can_delete(self):
+        self.client.force_login(self.owner)
+
+        get_response = self.client.get(self.delete_url)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertTrue(Thread.objects.filter(pk=self.thread.id).exists())
+
+        post_response = self.client.post(self.delete_url)
+        self.assertRedirects(post_response, reverse('forum:thread_list'))
+        self.assertFalse(Thread.objects.filter(pk=self.thread.id).exists())
+
+    def test_non_owner_cannot_delete_thread(self):
+        self.client.force_login(self.other_user)
+
+        response = self.client.post(self.delete_url)
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Thread.objects.filter(pk=self.thread.id).exists())
+
+    def test_staff_can_delete_thread(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.post(self.delete_url)
+
+        self.assertRedirects(response, reverse('forum:thread_list'))
+        self.assertFalse(Thread.objects.filter(pk=self.thread.id).exists())
+
+    def test_anonymous_user_is_redirected_to_login(self):
+        response = self.client.get(self.edit_url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
+    def test_management_controls_only_show_for_owner_or_staff(self):
+        detail_url = reverse('forum:view_thread', args=[self.thread.id])
+
+        self.client.force_login(self.owner)
+        owner_response = self.client.get(detail_url)
+        self.assertContains(owner_response, 'Edit Thread')
+        self.assertContains(owner_response, 'Delete Thread')
+
+        self.client.force_login(self.other_user)
+        other_response = self.client.get(detail_url)
+        self.assertNotContains(other_response, 'Edit Thread')
+        self.assertNotContains(other_response, 'Delete Thread')
