@@ -149,3 +149,46 @@ class ForumThreadDetailReplyTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['form'].errors)
         self.assertEqual(Response.objects.count(), 0)
+
+
+class ForumContentEscapingTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='escape-user',
+            password='test-password',
+        )
+        category = Category.objects.create(name='Safety')
+        self.thread = Thread.objects.create(
+            category=category,
+            title='Markup test',
+            content='<script>alert("thread")</script>\nSecond line',
+            author=self.user,
+        )
+        Response.objects.create(
+            thread=self.thread,
+            author=self.user,
+            content='<img src=x onerror=alert("reply")>\nReply line',
+        )
+
+    def test_thread_content_is_escaped_but_line_breaks_are_preserved(self):
+        response = self.client.get(
+            reverse('forum:view_thread', args=[self.thread.id]),
+        )
+
+        self.assertContains(
+            response,
+            '&lt;script&gt;alert(&quot;thread&quot;)&lt;/script&gt;',
+        )
+        self.assertNotContains(response, '<script>alert("thread")</script>')
+        self.assertContains(response, '<br>Second line')
+
+    def test_response_content_is_escaped(self):
+        response = self.client.get(
+            reverse('forum:view_thread', args=[self.thread.id]),
+        )
+
+        self.assertContains(
+            response,
+            '&lt;img src=x onerror=alert(&quot;reply&quot;)&gt;',
+        )
+        self.assertNotContains(response, '<img src=x onerror=alert("reply")>')

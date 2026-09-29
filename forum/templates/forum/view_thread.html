@@ -8,7 +8,7 @@
         <hr>
         <div class="thread">
           <div class="thread-row">
-            <div class="thread-content">{{ thread.content|safe }}</div>
+            <div class="thread-content">{{ thread.content|linebreaksbr }}</div>
             <div class="thread-info">{{ thread.author }} | {{ thread.created_at|date:"F d, Y" }}</div>
           </div>
         </div>
@@ -23,7 +23,7 @@
           {% for response in responses %}
             <li class="reply-list">
               <div class="reply-row">
-                <div class="reply-content">{{ response.content|safe }}</div>
+                <div class="reply-content">{{ response.content|linebreaksbr }}</div>
                 <div class="reply-info">{{ response.author }} | {{ response.created_at|date:"F d, Y" }}</div>
               </div>
             </li>
