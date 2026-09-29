@@ -10,6 +10,12 @@
           <div class="thread-row">
             <div class="thread-content">{{ thread.content|linebreaksbr }}</div>
             <div class="thread-info">{{ thread.author }} | {{ thread.created_at|date:"F d, Y" }}</div>
+            {% if user == thread.author or user.is_staff %}
+              <div class="mt-2">
+                <a href="{% url 'forum:edit_thread' thread.id %}" class="btn btn-sm btn-secondary">Edit Thread</a>
+                <a href="{% url 'forum:delete_thread' thread.id %}" class="btn btn-sm btn-danger">Delete Thread</a>
+              </div>
+            {% endif %}
           </div>
         </div>
         <h3>Post a Response</h3>
