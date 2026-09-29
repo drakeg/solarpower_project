@@ -180,7 +180,7 @@ class ForumContentEscapingTests(TestCase):
             '&lt;script&gt;alert(&quot;thread&quot;)&lt;/script&gt;',
         )
         self.assertNotContains(response, '<script>alert("thread")</script>')
-        self.assertContains(response, '<br>Second line', html=True)
+        self.assertContains(response, '<br>Second line')
 
     def test_response_content_is_escaped(self):
         response = self.client.get(
