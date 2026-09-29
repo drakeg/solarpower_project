@@ -11,4 +11,6 @@ urlpatterns = [
     path('view_thread/<int:thread_id>/', views.view_thread, name='view_thread'),
     path('thread/<int:thread_id>/edit/', views.edit_thread, name='edit_thread'),
     path('thread/<int:thread_id>/delete/', views.delete_thread, name='delete_thread'),
+    path('response/<int:response_id>/edit/', views.edit_response, name='edit_response'),
+    path('response/<int:response_id>/delete/', views.delete_response, name='delete_response'),
 ]
