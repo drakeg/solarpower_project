@@ -135,3 +135,43 @@ def delete_thread(request, thread_id):
         return redirect('forum:thread_list')
 
     return render(request, 'forum/delete_thread.html', {'thread': thread})
+
+
+def _can_manage_response(user, response):
+    return user.is_authenticated and (user == response.author or user.is_staff)
+
+
+@login_required
+def edit_response(request, response_id):
+    active_page = 'forum'
+    response = get_object_or_404(Response, pk=response_id)
+    if not _can_manage_response(request.user, response):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = ResponseForm(request.POST, instance=response)
+        if form.is_valid():
+            form.save()
+            return redirect('forum:view_thread', thread_id=response.thread_id)
+    else:
+        form = ResponseForm(instance=response)
+
+    return render(
+        request,
+        'forum/edit_response.html',
+        {'form': form, 'response': response, 'active_page': active_page},
+    )
+
+
+@login_required
+def delete_response(request, response_id):
+    response = get_object_or_404(Response, pk=response_id)
+    if not _can_manage_response(request.user, response):
+        raise PermissionDenied
+
+    thread_id = response.thread_id
+    if request.method == 'POST':
+        response.delete()
+        return redirect('forum:view_thread', thread_id=thread_id)
+
+    return render(request, 'forum/delete_response.html', {'response': response})

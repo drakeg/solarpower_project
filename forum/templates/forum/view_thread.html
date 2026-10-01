@@ -31,6 +31,12 @@
               <div class="reply-row">
                 <div class="reply-content">{{ response.content|linebreaksbr }}</div>
                 <div class="reply-info">{{ response.author }} | {{ response.created_at|date:"F d, Y" }}</div>
+                {% if user == response.author or user.is_staff %}
+                  <div class="mt-2">
+                    <a href="{% url 'forum:edit_response' response.id %}" class="btn btn-sm btn-secondary">Edit Response</a>
+                    <a href="{% url 'forum:delete_response' response.id %}" class="btn btn-sm btn-danger">Delete Response</a>
+                  </div>
+                {% endif %}
               </div>
             </li>
           {% endfor %}

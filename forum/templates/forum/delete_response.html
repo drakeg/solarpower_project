@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Delete Response</h1>
+<p>Are you sure you want to delete this response?</p>
+<blockquote>{{ response.content|linebreaksbr }}</blockquote>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete Response</button>
+    <a href="{% url 'forum:view_thread' response.thread_id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
