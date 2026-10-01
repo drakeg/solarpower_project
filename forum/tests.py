@@ -20,12 +20,22 @@ class ForumResponseTests(TestCase):
         )
 
     def test_create_response_requires_login(self):
-        response = self.client.get(
+        response = self.client.post(
             reverse('forum:create_response', args=[self.thread.id]),
+            {'content': 'Anonymous reply'},
         )
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('login'), response.url)
+
+    def test_create_response_rejects_get(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(
+            reverse('forum:create_response', args=[self.thread.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
 
     def test_create_response_creates_response_for_thread(self):
         self.client.force_login(self.user)
@@ -116,38 +126,28 @@ class ForumThreadDetailReplyTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Inverter advice')
 
-    def test_anonymous_post_redirects_to_login_without_creating_reply(self):
-        response = self.client.post(
-            self.url,
-            {'content': 'Unauthenticated reply'},
-        )
+    def test_anonymous_visitors_are_prompted_to_log_in(self):
+        response = self.client.get(self.url)
 
-        self.assertRedirects(
-            response,
-            f"{reverse('login')}?next={self.url}",
-            fetch_redirect_response=False,
-        )
-        self.assertEqual(Response.objects.count(), 0)
+        self.assertContains(response, 'Log in')
+        self.assertNotContains(response, 'Submit Response')
 
-    def test_authenticated_post_creates_reply(self):
+    def test_authenticated_visitors_see_reply_form(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, 'Submit Response')
+
+    def test_thread_detail_post_does_not_create_reply(self):
         self.client.force_login(self.user)
 
         response = self.client.post(
             self.url,
-            {'content': 'Use the simultaneous load and surge ratings.'},
+            {'content': 'Wrong endpoint'},
         )
-
-        self.assertRedirects(response, self.url)
-        self.assertEqual(Response.objects.count(), 1)
-        self.assertEqual(Response.objects.get().author, self.user)
-
-    def test_invalid_authenticated_post_preserves_errors(self):
-        self.client.force_login(self.user)
-
-        response = self.client.post(self.url, {'content': ''})
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context['form'].errors)
         self.assertEqual(Response.objects.count(), 0)
 
 
