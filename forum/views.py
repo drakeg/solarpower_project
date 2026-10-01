@@ -1,8 +1,8 @@
 # forum/views.py
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from .forms import ResponseForm, ThreadForm
 from .models import Category, Response, Thread
@@ -41,20 +41,19 @@ def create_thread(request):
 
 
 @login_required
+@require_POST
 def create_response(request, thread_id):
     active_page = 'forum'
     thread = get_object_or_404(Thread, pk=thread_id)
-    if request.method == 'POST':
-        form = ResponseForm(request.POST)
-        if form.is_valid():
-            Response.objects.create(
-                content=form.cleaned_data['content'],
-                author=request.user,
-                thread=thread,
-            )
-            return redirect('forum:view_thread', thread_id=thread_id)
-    else:
-        form = ResponseForm()
+    form = ResponseForm(request.POST)
+    if form.is_valid():
+        Response.objects.create(
+            content=form.cleaned_data['content'],
+            author=request.user,
+            thread=thread,
+        )
+        return redirect('forum:view_thread', thread_id=thread_id)
+
     return render(
         request,
         'forum/view_thread.html',
@@ -66,25 +65,10 @@ def create_response(request, thread_id):
         },
     )
 
-
 def view_thread(request, thread_id):
     active_page = 'forum'
     thread = get_object_or_404(Thread, pk=thread_id)
     responses = Response.objects.filter(thread=thread).order_by('-created_at')
-
-    if request.method == 'POST':
-        if not request.user.is_authenticated:
-            return redirect_to_login(request.get_full_path())
-        form = ResponseForm(request.POST)
-        if form.is_valid():
-            Response.objects.create(
-                content=form.cleaned_data['content'],
-                thread=thread,
-                author=request.user,
-            )
-            return redirect('forum:view_thread', thread_id=thread.id)
-    else:
-        form = ResponseForm()
 
     return render(
         request,
@@ -92,11 +76,10 @@ def view_thread(request, thread_id):
         {
             'thread': thread,
             'responses': responses,
-            'form': form,
+            'form': ResponseForm(),
             'active_page': active_page,
         },
     )
-
 
 def _can_manage_thread(user, thread):
     return user.is_authenticated and (user == thread.author or user.is_staff)
