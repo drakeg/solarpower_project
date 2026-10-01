@@ -1,6 +1,8 @@
 # forum/views.py
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -10,12 +12,15 @@ from .models import Category, Response, Thread
 
 def thread_list(request):
     active_page = 'forum'
-    categories_and_threads = [
-        (category, Thread.objects.filter(category=category))
-        for category in Category.objects.all()
-    ]
+    threads = (
+        Thread.objects
+        .select_related('author', 'category')
+        .annotate(response_count=Count('response'))
+        .order_by('-created_at')
+    )
+    page_obj = Paginator(threads, 20).get_page(request.GET.get('page'))
     context = {
-        'categories_and_threads': categories_and_threads,
+        'page_obj': page_obj,
         'active_page': active_page,
     }
     return render(request, 'forum/thread_list.html', context)
