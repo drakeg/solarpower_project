@@ -382,3 +382,60 @@ class ForumResponseManagementTests(TestCase):
         other_response = self.client.get(self.thread_url)
         self.assertNotContains(other_response, 'Edit Response')
         self.assertNotContains(other_response, 'Delete Response')
+
+
+class ForumThreadListTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='list-user',
+            password='password',
+        )
+        self.category = Category.objects.create(name='Forum index')
+        self.url = reverse('forum:thread_list')
+
+    def test_empty_forum_has_clear_empty_state(self):
+        response = self.client.get(self.url)
+
+        self.assertContains(response, 'No forum threads have been posted yet.')
+        self.assertContains(response, 'Log in')
+        self.assertNotContains(response, 'Create New Thread')
+
+    def test_authenticated_empty_forum_offers_create_thread(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, 'Create New Thread')
+
+    def test_thread_list_uses_annotated_response_count(self):
+        thread = Thread.objects.create(
+            category=self.category,
+            title='Counted thread',
+            content='Count replies without per-row count queries.',
+            author=self.user,
+        )
+        Response.objects.create(thread=thread, author=self.user, content='One')
+        Response.objects.create(thread=thread, author=self.user, content='Two')
+
+        response = self.client.get(self.url)
+
+        self.assertContains(response, 'Counted thread')
+        self.assertContains(response, self.category.name)
+        self.assertContains(response, '<td>2</td>', html=True)
+
+    def test_thread_list_paginates_twenty_threads_per_page(self):
+        for number in range(21):
+            Thread.objects.create(
+                category=self.category,
+                title=f'Thread {number:02d}',
+                content='Pagination test',
+                author=self.user,
+            )
+
+        first_page = self.client.get(self.url)
+        second_page = self.client.get(self.url, {'page': 2})
+
+        self.assertEqual(len(first_page.context['page_obj']), 20)
+        self.assertEqual(len(second_page.context['page_obj']), 1)
+        self.assertContains(first_page, 'Page 1 of 2')
+        self.assertContains(second_page, 'Page 2 of 2')
