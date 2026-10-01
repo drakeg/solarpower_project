@@ -211,14 +211,12 @@ class ForumThreadManagementTests(TestCase):
             content='Original content',
             author=self.owner,
         )
-        reverse('forum:edit_response', args=[self.response.id]) = reverse('forum:edit_thread', args=[self.thread.id])
-        reverse('forum:delete_response', args=[self.response.id]) = reverse('forum:delete_thread', args=[self.thread.id])
 
     def test_owner_can_edit_thread(self):
         self.client.force_login(self.owner)
 
         response = self.client.post(
-            reverse('forum:edit_response', args=[self.response.id]),
+            reverse('forum:edit_thread', args=[self.thread.id]),
             {
                 'title': 'Updated title',
                 'content': 'Updated content',
@@ -236,32 +234,32 @@ class ForumThreadManagementTests(TestCase):
     def test_non_owner_cannot_edit_thread(self):
         self.client.force_login(self.other_user)
 
-        response = self.client.get(reverse('forum:edit_response', args=[self.response.id]))
+        response = self.client.get(reverse('forum:edit_thread', args=[self.thread.id]))
 
         self.assertEqual(response.status_code, 403)
 
     def test_staff_can_edit_thread(self):
         self.client.force_login(self.staff)
 
-        response = self.client.get(reverse('forum:edit_response', args=[self.response.id]))
+        response = self.client.get(reverse('forum:edit_thread', args=[self.thread.id]))
 
         self.assertEqual(response.status_code, 200)
 
     def test_delete_requires_post_and_owner_can_delete(self):
         self.client.force_login(self.owner)
 
-        get_response = self.client.get(reverse('forum:delete_response', args=[self.response.id]))
+        get_response = self.client.get(reverse('forum:delete_thread', args=[self.thread.id]))
         self.assertEqual(get_response.status_code, 200)
         self.assertTrue(Thread.objects.filter(pk=self.thread.id).exists())
 
-        post_response = self.client.post(reverse('forum:delete_response', args=[self.response.id]))
+        post_response = self.client.post(reverse('forum:delete_thread', args=[self.thread.id]))
         self.assertRedirects(post_response, reverse('forum:thread_list'))
         self.assertFalse(Thread.objects.filter(pk=self.thread.id).exists())
 
     def test_non_owner_cannot_delete_thread(self):
         self.client.force_login(self.other_user)
 
-        response = self.client.post(reverse('forum:delete_response', args=[self.response.id]))
+        response = self.client.post(reverse('forum:delete_thread', args=[self.thread.id]))
 
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Thread.objects.filter(pk=self.thread.id).exists())
@@ -269,13 +267,13 @@ class ForumThreadManagementTests(TestCase):
     def test_staff_can_delete_thread(self):
         self.client.force_login(self.staff)
 
-        response = self.client.post(reverse('forum:delete_response', args=[self.response.id]))
+        response = self.client.post(reverse('forum:delete_thread', args=[self.thread.id]))
 
         self.assertRedirects(response, reverse('forum:thread_list'))
         self.assertFalse(Thread.objects.filter(pk=self.thread.id).exists())
 
     def test_anonymous_user_is_redirected_to_login(self):
-        response = self.client.get(reverse('forum:edit_response', args=[self.response.id]))
+        response = self.client.get(reverse('forum:edit_thread', args=[self.thread.id]))
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('login'), response.url)
