@@ -19,11 +19,15 @@
           </div>
         </div>
         <h3>Post a Response</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn">Submit Response</button>
-        </form>        
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'forum:create_response' thread.id %}">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit" class="btn">Submit Response</button>
+          </form>
+        {% else %}
+          <p><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a> to post a response.</p>
+        {% endif %}
         <hr>
         <ul class="replies">
           {% for response in responses %}
