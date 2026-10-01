@@ -106,11 +106,19 @@ Exit criteria:
 
 ### Sprint 6 — Forum and community UX
 
-Status: Planned
+Status: In progress
 
 Review forum permissions, posting flows, moderation fundamentals, navigation, and regression coverage.
 
-Initial goals:
+Delivered so far:
+
+- require authentication for reply creation while keeping thread reading public;
+- escape user-authored forum content to prevent stored markup execution;
+- let authors manage their own threads and responses while staff can moderate all forum content;
+- use explicit 403 responses for authenticated users attempting unauthorized management actions;
+- consolidate reply submission onto a single POST-only endpoint with auth-aware UI.
+
+Remaining goals:
 
 - audit thread and response permissions and authentication behavior;
 - improve thread/response creation and validation UX;
