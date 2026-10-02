@@ -139,7 +139,7 @@ class ForumThreadDetailReplyTests(TestCase):
 
         self.assertContains(response, 'Submit Response')
 
-    def test_thread_detail_post_does_not_create_reply(self):
+    def test_thread_detail_rejects_post_without_creating_reply(self):
         self.client.force_login(self.user)
 
         response = self.client.post(
@@ -147,7 +147,7 @@ class ForumThreadDetailReplyTests(TestCase):
             {'content': 'Wrong endpoint'},
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 405)
         self.assertEqual(Response.objects.count(), 0)
 
 
@@ -439,3 +439,54 @@ class ForumThreadListTests(TestCase):
         self.assertEqual(len(second_page.context['page_obj']), 1)
         self.assertContains(first_page, 'Page 1 of 2')
         self.assertContains(second_page, 'Page 2 of 2')
+
+
+class ForumHttpMethodTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='method-user',
+            password='password',
+        )
+        category = Category.objects.create(name='HTTP methods')
+        self.thread = Thread.objects.create(
+            category=category,
+            title='Method restrictions',
+            content='Verify unsupported methods are rejected.',
+            author=self.user,
+        )
+        self.response = Response.objects.create(
+            thread=self.thread,
+            author=self.user,
+            content='Managed response',
+        )
+        self.client.force_login(self.user)
+
+    def test_thread_edit_rejects_put(self):
+        response = self.client.put(
+            reverse('forum:edit_thread', args=[self.thread.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_thread_delete_rejects_put(self):
+        response = self.client.put(
+            reverse('forum:delete_thread', args=[self.thread.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Thread.objects.filter(pk=self.thread.id).exists())
+
+    def test_response_edit_rejects_put(self):
+        response = self.client.put(
+            reverse('forum:edit_response', args=[self.response.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_response_delete_rejects_put(self):
+        response = self.client.put(
+            reverse('forum:delete_response', args=[self.response.id]),
+        )
+
+        self.assertEqual(response.status_code, 405)
+        self.assertTrue(Response.objects.filter(pk=self.response.id).exists())
