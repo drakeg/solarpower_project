@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import ResponseForm, ThreadForm
-from .models import Category, Response, Thread
+from .models import Response, Thread
 
 
 def thread_list(request):
