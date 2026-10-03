@@ -27,11 +27,17 @@
     {% endfor %}
   </div>
 
+  {% empty %}
+    <div class="col-12">
+      <p>No blog posts have been published yet.</p>
+    </div>
+  </div>
+
   <!-- Pagination -->
   <div class="pagination mt-4 d-flex justify-content-center">
     {% if blog_posts.has_previous %}
       <a href="?page=1">&laquo; first</a>
-      <a href="?page={{ blog_posts.previous_page_page_number}}" class="px-3 py-1 border">« Prev</a>
+      <a href="?page={{ blog_posts.previous_page_number}}" class="px-3 py-1 border">« Prev</a>
     {% endif %}
 
     {% for i in blog_posts.paginator.page_range %}
@@ -49,7 +55,7 @@
     <!-- Add more page numbers as needed -->
     {% if blog_posts.has_next %}
       <a href="?page={{ blog_posts.next_page_number }}">next</a>
-      <a href="#" class="px-3 py-1 border">Next »</a>
+      <a href="?page={{ blog_posts.next_page_number }}" class="px-3 py-1 border">Next »</a>
     {% endif %}
   </div>
 {% endblock %}
