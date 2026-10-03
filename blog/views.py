@@ -1,5 +1,4 @@
 # blog/views.py
-import nltk
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,8 +6,6 @@ from nltk.tokenize import sent_tokenize
 
 from .forms import BlogPostForm
 from .models import BlogPost
-
-nltk.download('punkt')
 
 
 def generate_summary(article_text, sentences_count):
@@ -20,11 +17,11 @@ def home(request):
     active_page = 'blog'
     blog_posts = BlogPost.objects.all().order_by('-date_published')
     paginator = Paginator(blog_posts, 10)
+    page = request.GET.get('page')
+    blog_posts = paginator.get_page(page)
     for post in blog_posts:
         post.summary = generate_summary(post.content, sentences_count=2)
         post.keywords_list = post.keywords.split(', ') if post.keywords else []
-    page = request.GET.get('page')
-    blog_posts = paginator.get_page(page)
     return render(
         request,
         'blog/blog_list.html',
