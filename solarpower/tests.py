@@ -57,10 +57,12 @@ class CoreNavigationTests(TestCase):
 
 
 class SharedLayoutTests(TestCase):
-    def test_shared_navigation_has_no_placeholder_links(self):
+    def test_shared_navigation_omits_nonfunctional_placeholder_controls(self):
         response = self.client.get(reverse('blog:home'))
 
-        self.assertNotContains(response, 'href="#"')
+        for label in ('Contact', 'About', 'Messages', 'Search'):
+            with self.subTest(label=label):
+                self.assertNotContains(response, f'>{label}<')
 
     def test_shared_navigation_uses_unique_dropdown_ids(self):
         response = self.client.get(reverse('blog:home'))
