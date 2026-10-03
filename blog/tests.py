@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import BlogPost
+from .views import generate_summary
 
 
 class BlogViewTests(TestCase):
@@ -191,3 +192,29 @@ class BlogPostManagementTests(TestCase):
         other_response = self.client.get(detail_url)
         self.assertNotContains(other_response, 'Edit Post')
         self.assertNotContains(other_response, 'Delete Post')
+
+
+class BlogRuntimeTests(TestCase):
+    def test_summary_does_not_require_external_tokenizer_data(self):
+        summary = generate_summary(
+            'First sentence. Second sentence! Third sentence?',
+            sentences_count=2,
+        )
+
+        self.assertEqual(summary, 'First sentence. Second sentence!')
+
+    def test_summary_handles_text_without_terminal_punctuation(self):
+        self.assertEqual(generate_summary('Solar power basics', 2), 'Solar power basics')
+
+    def test_blog_home_rejects_post(self):
+        response = self.client.post(reverse('blog:home'))
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_blog_detail_rejects_post(self):
+        user = get_user_model().objects.create_user(username='method-author', password='password')
+        post = BlogPost.objects.create(title='Read only', content='Content.', author=user)
+
+        response = self.client.post(reverse('blog:blog_detail', args=[post.pk]))
+
+        self.assertEqual(response.status_code, 405)
