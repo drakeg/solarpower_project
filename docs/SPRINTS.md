@@ -129,11 +129,11 @@ Exit criteria met:
 - forum navigation, pagination, and empty states are functional;
 - the complete CI pipeline passes on the merged Sprint 6 implementation.
 
-## Current sprint
+## Completed content work
 
 ### Sprint 7 — Blog/content experience
 
-Status: In progress
+Status: Complete
 
 Improve content presentation, authoring workflow, navigation, and tests.
 
@@ -145,13 +145,22 @@ Delivered so far:
 - render stored keywords and authored content consistently;
 - enforce explicit HTTP method boundaries on blog read and authoring views.
 
-Remaining goals:
+Exit criteria met:
 
-- remove runtime/network side effects from blog rendering and startup;
-- repair and test blog pagination and empty states;
-- improve blog authoring and content presentation;
-- review ownership/editing permissions for authored content;
-- expand regression coverage for blog workflows.
+- blog rendering and startup no longer depend on runtime network downloads or external tokenizer data;
+- pagination and empty states are functional and covered by regression tests;
+- authoring forms, content presentation, and keyword rendering are consistent;
+- author ownership and staff moderation rules protect edit/delete actions;
+- blog read and mutation endpoints have explicit HTTP method boundaries;
+- the complete CI pipeline passes on the merged Sprint 7 implementation.
+
+## Current sprint
+
+### Sprint 8 — Site navigation and application polish
+
+Status: Planned
+
+Improve shared navigation, remove placeholder/dead controls, modernize shared layout details, and add regression coverage for cross-application navigation.
 
 ## Sprint rules
 
