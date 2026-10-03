@@ -1,5 +1,3 @@
-<!-- solarpower/templates/solarpower/blog/blog_detail.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -7,18 +5,23 @@
   <article class="card">
     <div class="card-body">
       <h1 class="card-title text-center">{{ blog_post.title }}</h1>
-      <p class="card-text text-muted text-center">Published on {{ blog_post.date_published }}</p>
-      <p class="card-text">
-        {% for keyword in blog_post.keywords.all %}
-          <span class="badge badge-secondary">{{ keyword }}</span>
-        {% endfor %}
-      </p>
-      <p class="card-text">{{ blog_post.summary }}</p>
+      <p class="card-text text-muted text-center">Published on {{ blog_post.date_published }} by {{ blog_post.author }}</p>
+      {% if keywords %}
+        <p class="card-text">
+          {% for keyword in keywords %}
+            <span class="badge text-bg-secondary">{{ keyword }}</span>
+          {% endfor %}
+        </p>
+      {% endif %}
       <hr>
-      <div class="card-text">{{ blog_post.content }}</div>
+      <div class="card-text">{{ blog_post.content|linebreaksbr }}</div>
     </div>
   </article>
 
   <a href="{% url 'blog:home' %}" class="btn mt-3">Back to Blog List</a>
+  {% if user == blog_post.author or user.is_staff %}
+    <a href="{% url 'blog:edit_blog_post' blog_post.pk %}" class="btn btn-secondary mt-3">Edit Post</a>
+    <a href="{% url 'blog:delete_blog_post' blog_post.pk %}" class="btn btn-danger mt-3">Delete Post</a>
+  {% endif %}
 </div>
 {% endblock %}
