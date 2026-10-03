@@ -3,17 +3,33 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-from nltk.tokenize import sent_tokenize
+from django.views.decorators.http import require_GET, require_http_methods
 
 from .forms import BlogPostForm
 from .models import BlogPost
 
 
 def generate_summary(article_text, sentences_count):
-    sentences = sent_tokenize(article_text)
-    return ' '.join(sentences[:sentences_count])
+    """Return a lightweight sentence summary without external tokenizer data."""
+    sentences = []
+    current = []
+    for character in article_text.strip():
+        current.append(character)
+        if character in '.!?':
+            sentence = ''.join(current).strip()
+            if sentence:
+                sentences.append(sentence)
+            current = []
+            if len(sentences) == sentences_count:
+                break
+
+    if current and len(sentences) < sentences_count:
+        sentences.append(''.join(current).strip())
+
+    return ' '.join(sentences)
 
 
+@require_GET
 def home(request):
     active_page = 'blog'
     blog_posts = BlogPost.objects.all().order_by('-date_published')
@@ -30,6 +46,7 @@ def home(request):
     )
 
 
+@require_GET
 def blog_detail(request, pk):
     active_page = 'blog'
     blog_post = get_object_or_404(BlogPost, pk=pk)
@@ -54,6 +71,7 @@ def _can_manage_post(user, blog_post):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def create_blog_post(request):
     active_page = 'blog'
     if request.method == 'POST':
@@ -73,6 +91,7 @@ def create_blog_post(request):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def edit_blog_post(request, pk):
     active_page = 'blog'
     blog_post = get_object_or_404(BlogPost, pk=pk)
@@ -99,6 +118,7 @@ def edit_blog_post(request, pk):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def delete_blog_post(request, pk):
     blog_post = get_object_or_404(BlogPost, pk=pk)
     if not _can_manage_post(request.user, blog_post):

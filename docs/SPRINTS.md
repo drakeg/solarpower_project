@@ -137,7 +137,15 @@ Status: In progress
 
 Improve content presentation, authoring workflow, navigation, and tests.
 
-Initial goals:
+Delivered so far:
+
+- make blog listing pagination and empty states deterministic;
+- remove NLTK download/tokenizer runtime dependencies from blog summaries;
+- add author/staff edit and delete controls with permission regression tests;
+- render stored keywords and authored content consistently;
+- enforce explicit HTTP method boundaries on blog read and authoring views.
+
+Remaining goals:
 
 - remove runtime/network side effects from blog rendering and startup;
 - repair and test blog pagination and empty states;
