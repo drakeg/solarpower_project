@@ -102,11 +102,11 @@ Exit criteria:
 - calculator workflows have behavioral and utility-level regression tests;
 - the complete CI pipeline passes on the merged Sprint 5 implementation.
 
-## Current sprint
+## Completed community work
 
 ### Sprint 6 — Forum and community UX
 
-Status: In progress
+Status: Complete
 
 Review forum permissions, posting flows, moderation fundamentals, navigation, and regression coverage.
 
@@ -121,19 +121,29 @@ Delivered so far:
 - enforce explicit HTTP method boundaries for forum read and mutation views;
 - standardize thread/response form styling and visible validation feedback.
 
-Remaining goals:
+Exit criteria met:
 
-- audit thread and response permissions and authentication behavior;
-- improve thread/response creation and validation UX;
-- establish basic moderation and ownership rules where missing;
-- improve forum navigation and empty/error states;
-- expand regression coverage around posting, permissions, and moderation.
+- thread and response permissions and authentication behavior are covered by regression tests;
+- posting and validation UX is explicit and consistent;
+- author ownership and staff moderation boundaries are enforced;
+- forum navigation, pagination, and empty states are functional;
+- the complete CI pipeline passes on the merged Sprint 6 implementation.
 
-## Candidate future sprints
+## Current sprint
 
 ### Sprint 7 — Blog/content experience
 
+Status: In progress
+
 Improve content presentation, authoring workflow, navigation, and tests.
+
+Initial goals:
+
+- remove runtime/network side effects from blog rendering and startup;
+- repair and test blog pagination and empty states;
+- improve blog authoring and content presentation;
+- review ownership/editing permissions for authored content;
+- expand regression coverage for blog workflows.
 
 ## Sprint rules
 
