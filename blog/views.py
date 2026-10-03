@@ -1,5 +1,6 @@
 # blog/views.py
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from nltk.tokenize import sent_tokenize
@@ -32,11 +33,24 @@ def home(request):
 def blog_detail(request, pk):
     active_page = 'blog'
     blog_post = get_object_or_404(BlogPost, pk=pk)
+    keywords = [
+        keyword.strip()
+        for keyword in (blog_post.keywords or '').split(',')
+        if keyword.strip()
+    ]
     return render(
         request,
         'blog/blog_detail.html',
-        {'blog_post': blog_post, 'active_page': active_page},
+        {
+            'blog_post': blog_post,
+            'keywords': keywords,
+            'active_page': active_page,
+        },
     )
+
+
+def _can_manage_post(user, blog_post):
+    return user.is_authenticated and (user == blog_post.author or user.is_staff)
 
 
 @login_required
@@ -55,4 +69,47 @@ def create_blog_post(request):
         request,
         'blog/blog_post_form.html',
         {'form': form, 'active_page': active_page},
+    )
+
+
+@login_required
+def edit_blog_post(request, pk):
+    active_page = 'blog'
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+    if not _can_manage_post(request.user, blog_post):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=blog_post)
+        if form.is_valid():
+            form.save()
+            return redirect('blog:blog_detail', pk=blog_post.pk)
+    else:
+        form = BlogPostForm(instance=blog_post)
+
+    return render(
+        request,
+        'blog/blog_post_form.html',
+        {
+            'form': form,
+            'blog_post': blog_post,
+            'active_page': active_page,
+        },
+    )
+
+
+@login_required
+def delete_blog_post(request, pk):
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+    if not _can_manage_post(request.user, blog_post):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        blog_post.delete()
+        return redirect('blog:home')
+
+    return render(
+        request,
+        'blog/blog_post_confirm_delete.html',
+        {'blog_post': blog_post},
     )
