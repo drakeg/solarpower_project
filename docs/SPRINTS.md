@@ -158,9 +158,17 @@ Exit criteria met:
 
 ### Sprint 8 — Site navigation and application polish
 
-Status: Planned
+Status: In progress
 
 Improve shared navigation, remove placeholder/dead controls, modernize shared layout details, and add regression coverage for cross-application navigation.
+
+Delivered so far:
+
+- remove dead Contact, About, Messages, and nonfunctional Search controls rather than presenting placeholder actions;
+- give shared navigation dropdowns unique HTML identifiers;
+- remove Bootstrap example canonical/docsearch metadata from the application shell;
+- render the footer year dynamically;
+- add shared-layout regression coverage.
 
 ## Sprint rules
 
