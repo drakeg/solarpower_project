@@ -96,3 +96,98 @@ class BlogListPaginationTests(TestCase):
         self.assertContains(first_page, '?page=2')
         self.assertContains(second_page, 'Page 2 of 2')
         self.assertContains(second_page, '?page=1')
+
+
+class BlogPostManagementTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.owner = user_model.objects.create_user(username='post-owner', password='password')
+        self.other_user = user_model.objects.create_user(username='post-other', password='password')
+        self.staff = user_model.objects.create_user(
+            username='post-staff',
+            password='password',
+            is_staff=True,
+        )
+        self.post = BlogPost.objects.create(
+            title='Managed post',
+            content='Managed content.',
+            keywords='solar, batteries',
+            author=self.owner,
+        )
+
+    def test_detail_displays_plain_text_keywords_as_badges(self):
+        response = self.client.get(reverse('blog:blog_detail', args=[self.post.pk]))
+
+        self.assertContains(response, 'solar')
+        self.assertContains(response, 'batteries')
+
+    def test_owner_can_edit_post(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(
+            reverse('blog:edit_blog_post', args=[self.post.pk]),
+            {
+                'title': 'Updated post',
+                'content': 'Updated content.',
+                'keywords': 'updated',
+            },
+        )
+
+        self.assertRedirects(response, reverse('blog:blog_detail', args=[self.post.pk]))
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.title, 'Updated post')
+
+    def test_non_owner_cannot_edit_post(self):
+        self.client.force_login(self.other_user)
+
+        response = self.client.get(reverse('blog:edit_blog_post', args=[self.post.pk]))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_edit_post(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.get(reverse('blog:edit_blog_post', args=[self.post.pk]))
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_owner_delete_requires_post(self):
+        self.client.force_login(self.owner)
+        delete_url = reverse('blog:delete_blog_post', args=[self.post.pk])
+
+        get_response = self.client.get(delete_url)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertTrue(BlogPost.objects.filter(pk=self.post.pk).exists())
+
+        post_response = self.client.post(delete_url)
+        self.assertRedirects(post_response, reverse('blog:home'))
+        self.assertFalse(BlogPost.objects.filter(pk=self.post.pk).exists())
+
+    def test_non_owner_cannot_delete_post(self):
+        self.client.force_login(self.other_user)
+
+        response = self.client.post(reverse('blog:delete_blog_post', args=[self.post.pk]))
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(BlogPost.objects.filter(pk=self.post.pk).exists())
+
+    def test_staff_can_delete_post(self):
+        self.client.force_login(self.staff)
+
+        response = self.client.post(reverse('blog:delete_blog_post', args=[self.post.pk]))
+
+        self.assertRedirects(response, reverse('blog:home'))
+        self.assertFalse(BlogPost.objects.filter(pk=self.post.pk).exists())
+
+    def test_management_controls_only_show_for_owner_or_staff(self):
+        detail_url = reverse('blog:blog_detail', args=[self.post.pk])
+
+        self.client.force_login(self.owner)
+        owner_response = self.client.get(detail_url)
+        self.assertContains(owner_response, 'Edit Post')
+        self.assertContains(owner_response, 'Delete Post')
+
+        self.client.force_login(self.other_user)
+        other_response = self.client.get(detail_url)
+        self.assertNotContains(other_response, 'Edit Post')
+        self.assertNotContains(other_response, 'Delete Post')
