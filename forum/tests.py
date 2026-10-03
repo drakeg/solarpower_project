@@ -490,3 +490,52 @@ class ForumHttpMethodTests(TestCase):
 
         self.assertEqual(response.status_code, 405)
         self.assertTrue(Response.objects.filter(pk=self.response.id).exists())
+
+
+class ForumFormUxTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='form-user',
+            password='password',
+        )
+        self.category = Category.objects.create(name='Form UX')
+        self.thread = Thread.objects.create(
+            category=self.category,
+            title='Editable thread',
+            content='Original content',
+            author=self.user,
+        )
+        self.client.force_login(self.user)
+
+    def test_create_thread_invalid_submission_shows_field_errors(self):
+        response = self.client.post(
+            reverse('forum:create_thread'),
+            {'title': '', 'content': '', 'category': ''},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This field is required.')
+        self.assertEqual(Thread.objects.count(), 1)
+
+    def test_thread_form_uses_bootstrap_widgets(self):
+        response = self.client.get(reverse('forum:create_thread'))
+
+        self.assertContains(response, 'class="form-control"')
+        self.assertContains(response, 'class="form-select"')
+
+    def test_edit_response_invalid_submission_shows_error(self):
+        forum_response = Response.objects.create(
+            thread=self.thread,
+            author=self.user,
+            content='Original reply',
+        )
+
+        response = self.client.post(
+            reverse('forum:edit_response', args=[forum_response.id]),
+            {'content': ''},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This field is required.')
+        forum_response.refresh_from_db()
+        self.assertEqual(forum_response.content, 'Original reply')

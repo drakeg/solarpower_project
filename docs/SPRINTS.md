@@ -116,7 +116,10 @@ Delivered so far:
 - escape user-authored forum content to prevent stored markup execution;
 - let authors manage their own threads and responses while staff can moderate all forum content;
 - use explicit 403 responses for authenticated users attempting unauthorized management actions;
-- consolidate reply submission onto a single POST-only endpoint with auth-aware UI.
+- consolidate reply submission onto a single POST-only endpoint with auth-aware UI;
+- add real forum pagination, efficient reply counts, and authenticated/anonymous empty states;
+- enforce explicit HTTP method boundaries for forum read and mutation views;
+- standardize thread/response form styling and visible validation feedback.
 
 Remaining goals:
 
