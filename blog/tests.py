@@ -62,3 +62,37 @@ class BlogViewTests(TestCase):
             response,
             reverse('blog:blog_detail', args=[created.pk]),
         )
+
+
+class BlogListPaginationTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='pagination-author',
+            password='test-password',
+        )
+        self.url = reverse('blog:home')
+
+    @patch('blog.views.generate_summary', return_value='Summary')
+    def test_empty_blog_has_clear_empty_state(self, _summary):
+        response = self.client.get(self.url)
+
+        self.assertContains(response, 'No blog posts have been published yet.')
+
+    @patch('blog.views.generate_summary', return_value='Summary')
+    def test_blog_list_paginates_ten_posts_per_page(self, _summary):
+        for number in range(11):
+            BlogPost.objects.create(
+                title=f'Post {number:02d}',
+                content='Solar content.',
+                author=self.user,
+            )
+
+        first_page = self.client.get(self.url)
+        second_page = self.client.get(self.url, {'page': 2})
+
+        self.assertEqual(len(first_page.context['blog_posts']), 10)
+        self.assertEqual(len(second_page.context['blog_posts']), 1)
+        self.assertContains(first_page, 'Page 1 of 2')
+        self.assertContains(first_page, '?page=2')
+        self.assertContains(second_page, 'Page 2 of 2')
+        self.assertContains(second_page, '?page=1')
