@@ -83,6 +83,17 @@ class SharedLayoutTests(TestCase):
             with self.subTest(label=label):
                 self.assertNotContains(response, f'>{label}<')
 
+    def test_authenticated_navigation_omits_nonfunctional_account_controls(self):
+        user = get_user_model().objects.create_user(
+            username='navigation-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertNotContains(response, '>Messages<')
+
     def test_shared_navigation_uses_unique_dropdown_ids(self):
         response = self.client.get(reverse('blog:home'))
         content = response.content.decode()
