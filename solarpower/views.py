@@ -2,8 +2,10 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_http_methods
 
 
 logout_view = LogoutView.as_view()
@@ -19,10 +21,12 @@ def calculator(request):
     return render(request, 'calculator.html', {'active_page': active_page})
 
 
+@login_required
 def user_profile(request):
     return render(request, 'user_profile.html', {'user': request.user})
 
 
+@require_http_methods(['GET', 'POST'])
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)

@@ -168,7 +168,10 @@ Delivered so far:
 - give shared navigation dropdowns unique HTML identifiers;
 - remove Bootstrap example canonical/docsearch metadata from the application shell;
 - render the footer year dynamically;
-- add shared-layout regression coverage.
+- add shared-layout regression coverage;
+- protect the user profile behind authentication and constrain registration to GET/POST;
+- repair registration markup and make login/registration validation and actions explicit;
+- remove an orphaned global forum-voting script whose server endpoint does not exist.
 
 ## Sprint rules
 
