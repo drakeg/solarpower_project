@@ -54,3 +54,31 @@ class CoreNavigationTests(TestCase):
             with self.subTest(route=route_name):
                 response = self.client.get(reverse(route_name))
                 self.assertEqual(response.status_code, 200)
+
+
+class SharedLayoutTests(TestCase):
+    def test_shared_navigation_omits_nonfunctional_placeholder_controls(self):
+        response = self.client.get(reverse('blog:home'))
+
+        for label in ('Contact', 'About', 'Messages', 'Search'):
+            with self.subTest(label=label):
+                self.assertNotContains(response, f'>{label}<')
+
+    def test_shared_navigation_uses_unique_dropdown_ids(self):
+        response = self.client.get(reverse('blog:home'))
+        content = response.content.decode()
+
+        self.assertEqual(content.count('id="calculatorsDropdown"'), 1)
+        self.assertEqual(content.count('id="guestDropdown"'), 1)
+        self.assertNotIn('id="navbarDropdown"', content)
+
+    def test_shared_layout_does_not_advertise_bootstrap_example_canonical(self):
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertNotContains(response, 'getbootstrap.com/docs/5.3/examples/blog')
+
+    def test_footer_uses_current_year(self):
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertContains(response, 'Solar Education Site. All rights reserved.')
+        self.assertNotContains(response, '&copy; 2023', html=False)
