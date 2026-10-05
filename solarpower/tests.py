@@ -158,3 +158,21 @@ class AccountTemplateTests(TestCase):
 
         self.assertContains(response, 'Login')
         self.assertContains(response, 'Cancel')
+
+
+    def test_authenticated_user_can_reach_blog_authoring_from_account_menu(self):
+        user = get_user_model().objects.create_user(
+            username='blog-author',
+            password='test-password',
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertContains(response, reverse('blog:create_blog_post'))
+        self.assertContains(response, 'Create Blog Post')
+
+    def test_shared_layout_does_not_load_jquery(self):
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertNotContains(response, 'jquery')
