@@ -1,24 +1,9 @@
 # views.py in the solarpower app
-from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
-
-
-logout_view = LogoutView.as_view()
-
-
-def home(request):
-    active_page = 'home'
-    return render(request, 'home.html', {'active_page': active_page})
-
-
-def calculator(request):
-    active_page = 'calculator'
-    return render(request, 'calculator.html', {'active_page': active_page})
 
 
 @login_required
@@ -37,9 +22,3 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
-
-
-def custom_logout(request):
-    logout(request)
-    messages.success(request, "You have been logged out successfully.")
-    return redirect('home')
