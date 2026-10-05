@@ -58,6 +58,25 @@ class AccountViewTests(TestCase):
 
         self.assertEqual(response.status_code, 405)
 
+    def test_logout_requires_post_and_ends_session(self):
+        user = get_user_model().objects.create_user(
+            username='logout-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+
+        get_response = self.client.get(reverse('logout'))
+        self.assertEqual(get_response.status_code, 405)
+
+        post_response = self.client.post(reverse('logout'))
+        self.assertRedirects(post_response, reverse('blog:home'))
+
+        profile_response = self.client.get(reverse('user_profile'))
+        self.assertRedirects(
+            profile_response,
+            f"{reverse('login')}?next={reverse('user_profile')}",
+        )
+
 
 class CoreNavigationTests(TestCase):
     def test_primary_routes_are_available(self):
@@ -82,6 +101,18 @@ class SharedLayoutTests(TestCase):
         for label in ('Contact', 'About', 'Messages', 'Search'):
             with self.subTest(label=label):
                 self.assertNotContains(response, f'>{label}<')
+
+    def test_authenticated_navigation_uses_post_logout_form(self):
+        user = get_user_model().objects.create_user(
+            username='logout-navigation-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertContains(response, f'action="{reverse("logout")}"')
+        self.assertContains(response, 'method="post"')
 
     def test_authenticated_navigation_omits_nonfunctional_account_controls(self):
         user = get_user_model().objects.create_user(
