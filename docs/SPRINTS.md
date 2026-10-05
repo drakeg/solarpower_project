@@ -171,7 +171,9 @@ Delivered so far:
 - add shared-layout regression coverage;
 - protect the user profile behind authentication and constrain registration to GET/POST;
 - repair registration markup and make login/registration validation and actions explicit;
-- remove an orphaned global forum-voting script whose server endpoint does not exist.
+- remove an orphaned global forum-voting script whose server endpoint does not exist;
+- make logout an explicit POST action and cover session termination with regression tests;
+- remove unreachable legacy home, calculator, and custom logout view code.
 
 ## Sprint rules
 
