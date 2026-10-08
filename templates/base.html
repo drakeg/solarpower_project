@@ -11,13 +11,14 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   </head>
   <body>
+    <a class="visually-hidden-focusable" href="#main-content">Skip to main content</a>
     <!-- Header Section -->
     <header class="text-center py-4">
       <h1>Solar</h1>
     </header>
 
     <!-- Navigation Links -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg" aria-label="Primary navigation">
       <div class="container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -25,13 +26,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link{% if active_page == 'blog' %} active{% endif %}" href="{% url 'blog:home' %}">Blog</a>
+              <a class="nav-link{% if active_page == 'blog' %} active{% endif %}"{% if active_page == 'blog' %} aria-current="page"{% endif %} href="{% url 'blog:home' %}">Blog</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link{% if active_page == 'forum' %} active{% endif %}" href="{% url 'forum:thread_list' %}">Forum</a>
+              <a class="nav-link{% if active_page == 'forum' %} active{% endif %}"{% if active_page == 'forum' %} aria-current="page"{% endif %} href="{% url 'forum:thread_list' %}">Forum</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle{% if active_page == 'calculators' %} active{% endif %}" href="#" id="calculatorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Calculators</a>
+              <a class="nav-link dropdown-toggle{% if active_page == 'calculators' %} active{% endif %}"{% if active_page == 'calculators' %} aria-current="page"{% endif %} href="#" id="calculatorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Calculators</a>
               <ul class="dropdown-menu" aria-labelledby="calculatorsDropdown">
                 <li><a class="dropdown-item" href="{% url 'calculators:solar_savings_calculator' %}">Solar Savings</a></li>
                 <li><a class="dropdown-item" href="{% url 'calculators:solar_system_sizing_calculator' %}">System Sizing</a></li>
@@ -83,10 +84,10 @@
       </div>
     </nav>
 
-    <div class="container my-3">
+    <main id="main-content" class="container my-3">
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
 
     <!-- Footer Section -->
     <footer class="text-white text-center py-3 mt-5 sticky-footer">

@@ -95,6 +95,15 @@ class CoreNavigationTests(TestCase):
 
 
 class SharedLayoutTests(TestCase):
+    def test_shared_layout_has_accessible_landmarks_and_skip_link(self):
+        response = self.client.get(reverse("blog:home"))
+
+        self.assertContains(response, 'href="#main-content"')
+        self.assertContains(response, 'id="main-content"')
+        self.assertContains(response, 'aria-label="Primary navigation"')
+        self.assertContains(response, 'aria-current="page"')
+
+
     def test_shared_navigation_omits_nonfunctional_placeholder_controls(self):
         response = self.client.get(reverse('blog:home'))
 
