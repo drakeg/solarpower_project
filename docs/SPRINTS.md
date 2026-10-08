@@ -173,7 +173,8 @@ Delivered so far:
 - repair registration markup and make login/registration validation and actions explicit;
 - remove an orphaned global forum-voting script whose server endpoint does not exist;
 - make logout an explicit POST action and cover session termination with regression tests;
-- remove unreachable legacy home, calculator, and custom logout view code.
+- remove unreachable legacy home, calculator, and custom logout view code;
+- display uploaded blog images on list/detail pages and configure local-development media serving.
 
 ## Sprint rules
 

@@ -31,6 +31,22 @@ class BlogViewTests(TestCase):
         self.assertEqual(listed_post.summary, 'First sentence. Second sentence.')
         self.assertEqual(listed_post.keywords_list, ['solar', 'basics'])
 
+    def test_blog_list_displays_uploaded_image(self):
+        self.post.image = 'blog_images/solar-array.jpg'
+        self.post.save(update_fields=['image'])
+
+        response = self.client.get(reverse('blog:home'))
+
+        self.assertContains(response, '/media/blog_images/solar-array.jpg')
+
+    def test_blog_detail_displays_uploaded_image(self):
+        self.post.image = 'blog_images/solar-array.jpg'
+        self.post.save(update_fields=['image'])
+
+        response = self.client.get(reverse('blog:blog_detail', args=[self.post.pk]))
+
+        self.assertContains(response, '/media/blog_images/solar-array.jpg')
+
     def test_blog_detail_displays_post(self):
         response = self.client.get(
             reverse('blog:blog_detail', args=[self.post.pk]),

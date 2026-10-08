@@ -3,6 +3,9 @@
 {% block content %}
 <div class="container my-5">
   <article class="card">
+    {% if blog_post.image %}
+      <img src="{{ blog_post.image.url }}" class="card-img-top img-fluid" alt="">
+    {% endif %}
     <div class="card-body">
       <h1 class="card-title text-center">{{ blog_post.title }}</h1>
       <p class="card-text text-muted text-center">Published on {{ blog_post.date_published }} by {{ blog_post.author }}</p>
