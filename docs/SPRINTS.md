@@ -174,7 +174,8 @@ Delivered so far:
 - remove an orphaned global forum-voting script whose server endpoint does not exist;
 - make logout an explicit POST action and cover session termination with regression tests;
 - remove unreachable legacy home, calculator, and custom logout view code;
-- display uploaded blog images on list/detail pages and configure local-development media serving.
+- display uploaded blog images on list/detail pages and configure local-development media serving;
+- replace the content-obscuring fixed footer with a flex-based page layout and add responsive forum row styling.
 
 ## Sprint rules
 

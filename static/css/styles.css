@@ -198,10 +198,51 @@ h2 {
     padding: 0;
 }
 
-/* Sticky Footer */
+/* Keep the footer at the bottom of short pages without covering content. */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main#main-content {
+    flex: 1 0 auto;
+    min-width: 0;
+}
+
 .sticky-footer {
-    position: fixed;
-    bottom: 0;
+    flex-shrink: 0;
     width: 100%;
-    background-color: #5BA45F; /* Adjust the background color as needed */
+    background-color: #5BA45F;
+}
+
+/* Forum rows collapse to a readable single column on small screens. */
+@media (max-width: 767.98px) {
+    .thread-header {
+        display: none;
+    }
+
+    .thread-item {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.4rem;
+        overflow-wrap: anywhere;
+    }
+
+    .thread-row,
+    .reply-row {
+        flex-direction: column;
+        gap: 0.75rem;
+        overflow-wrap: anywhere;
+    }
+
+    .thread-content,
+    .reply-content {
+        padding-right: 0;
+        min-width: 0;
+    }
+
+    .thread-info,
+    .reply-info {
+        text-align: left;
+    }
 }
