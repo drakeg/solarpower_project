@@ -246,3 +246,26 @@ main#main-content {
         text-align: left;
     }
 }
+/* Keep collapsed navigation readable and make keyboard focus visible. */
+.navbar .nav-link:focus-visible,
+.navbar .dropdown-item:focus-visible,
+.navbar .navbar-toggler:focus-visible {
+    outline: 3px solid #173b20;
+    outline-offset: 2px;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-nav .nav-link {
+        text-align: left;
+        padding: 0.65rem 0.75rem;
+    }
+
+    .navbar-nav .dropdown-menu {
+        max-width: 100%;
+    }
+
+    .navbar-nav .dropdown-item {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
