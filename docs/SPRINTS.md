@@ -154,11 +154,11 @@ Exit criteria met:
 - blog read and mutation endpoints have explicit HTTP method boundaries;
 - the complete CI pipeline passes on the merged Sprint 7 implementation.
 
-## Current sprint
+## Completed site experience work
 
 ### Sprint 8 — Site navigation and application polish
 
-Status: In progress
+Status: Complete
 
 Improve shared navigation, remove placeholder/dead controls, modernize shared layout details, and add regression coverage for cross-application navigation.
 
@@ -178,6 +178,36 @@ Delivered so far:
 - replace the content-obscuring fixed footer with a flex-based page layout and add responsive forum row styling;
 - improve collapsed mobile navigation readability and visible keyboard focus states;
 - add role-aware navigation regression tests for guest, member, and staff views.
+
+Sprint 8 exit criteria met:
+
+- shared navigation exposes functioning routes and role-appropriate actions;
+- page landmarks, keyboard focus styling, and responsive navigation are in place;
+- shared navigation, account actions, and layout behavior have regression coverage;
+- the merged Sprint 8 implementation passes the main-branch CI pipeline.
+
+## Current sprint
+
+### Sprint 9 — Calculator reliability and practical guidance
+
+Status: Planned
+
+Improve calculator accuracy, explain assumptions, and make residential/RV sizing workflows easier to validate.
+
+Planned deliverables:
+
+- audit inverter continuous/surge demand assumptions, including simultaneous startup loads;
+- review load worksheet and system sizing handoff for units and edge cases;
+- clarify battery usable capacity, efficiency losses, and solar production assumptions in results;
+- expand boundary-condition and cross-calculator regression tests;
+- document calculation methods and known limitations for end users.
+
+Exit criteria:
+
+- calculation assumptions and units are explicit and consistent across tools;
+- invalid and boundary inputs produce safe, actionable feedback;
+- critical calculations and calculator handoffs have regression tests;
+- documentation is updated and the full CI matrix passes.
 
 ## Sprint rules
 
