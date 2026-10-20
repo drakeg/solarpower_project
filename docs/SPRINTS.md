@@ -176,7 +176,8 @@ Delivered so far:
 - remove unreachable legacy home, calculator, and custom logout view code;
 - display uploaded blog images on list/detail pages and configure local-development media serving;
 - replace the content-obscuring fixed footer with a flex-based page layout and add responsive forum row styling;
-- improve collapsed mobile navigation readability and visible keyboard focus states.
+- improve collapsed mobile navigation readability and visible keyboard focus states;
+- add role-aware navigation regression tests for guest, member, and staff views.
 
 ## Sprint rules
 

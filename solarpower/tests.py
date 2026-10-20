@@ -134,6 +134,32 @@ class SharedLayoutTests(TestCase):
 
         self.assertNotContains(response, '>Messages<')
 
+    def test_navigation_differs_by_authentication_and_staff_role(self):
+        url = reverse('blog:home')
+        author_url = reverse('blog:create_blog_post')
+        admin_url = reverse('admin:index')
+
+        guest = self.client.get(url)
+        self.assertNotContains(guest, author_url)
+        self.assertNotContains(guest, admin_url)
+        self.assertContains(guest, reverse('login'))
+        self.assertContains(guest, reverse('register'))
+
+        user = get_user_model().objects.create_user(
+            username='regular-navigation-user', password='test-password',
+        )
+        self.client.force_login(user)
+        member = self.client.get(url)
+        self.assertContains(member, author_url)
+        self.assertNotContains(member, admin_url)
+        self.assertContains(member, reverse('user_profile'))
+
+        user.is_staff = True
+        user.save(update_fields=['is_staff'])
+        staff = self.client.get(url)
+        self.assertContains(staff, author_url)
+        self.assertContains(staff, admin_url)
+
     def test_shared_navigation_uses_unique_dropdown_ids(self):
         response = self.client.get(reverse('blog:home'))
         content = response.content.decode()
