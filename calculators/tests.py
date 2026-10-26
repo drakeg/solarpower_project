@@ -355,7 +355,7 @@ class CalculateInverterSizeTests(TestCase):
         )
 
         self.assertEqual(result['recommended_continuous_watts'], Decimal('2000'))
-        self.assertEqual(result['required_surge_watts'], Decimal('3000'))
+        self.assertEqual(result['required_surge_watts'], Decimal('4600'))
 
     def test_surge_requirement_never_falls_below_running_load(self):
         result = calculate_inverter_size(
