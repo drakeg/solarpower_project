@@ -328,7 +328,7 @@ class InverterSizingTests(TestCase):
         result = response.context['inverter_result']
         self.assertEqual(response.status_code, 200)
         self.assertEqual(result['recommended_continuous_watts'], Decimal('2000'))
-        self.assertEqual(result['required_surge_watts'], Decimal('3000'))
+        self.assertEqual(result['required_surge_watts'], Decimal('4600'))
 
     def test_invalid_continuous_load_is_rejected(self):
         response = self.client.post(
@@ -366,4 +366,33 @@ class CalculateInverterSizeTests(TestCase):
             },
         )
 
-        self.assertEqual(result['required_surge_watts'], Decimal('1600'))
+        self.assertEqual(result['required_surge_watts'], Decimal('2600'))
+
+
+class SimultaneousInverterSurgeTests(TestCase):
+    def test_other_running_loads_are_included_during_startup(self):
+        result = calculate_inverter_size({
+            'continuous_load_watts': Decimal('1600'),
+            'largest_starting_watts': Decimal('3000'),
+            'starting_load_running_watts': Decimal('600'),
+            'continuous_headroom_percent': Decimal('25'),
+        })
+        self.assertEqual(result['required_surge_watts'], Decimal('4000'))
+        self.assertEqual(result['recommended_continuous_watts'], Decimal('2000'))
+
+    def test_optional_running_watts_preserves_existing_estimate(self):
+        result = calculate_inverter_size({
+            'continuous_load_watts': Decimal('1600'),
+            'largest_starting_watts': Decimal('3000'),
+            'continuous_headroom_percent': Decimal('25'),
+        })
+        self.assertEqual(result['required_surge_watts'], Decimal('4600'))
+
+    def test_surge_with_other_running_loads_through_view(self):
+        response = self.client.post(reverse('calculators:inverter_sizing_calculator'), {
+            'continuous_load_watts': '1600',
+            'largest_starting_watts': '3000',
+            'starting_load_running_watts': '600',
+            'continuous_headroom_percent': '25',
+        })
+        self.assertEqual(response.context['inverter_result']['required_surge_watts'], Decimal('4000'))
