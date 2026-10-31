@@ -190,13 +190,13 @@ Sprint 8 exit criteria met:
 
 ### Sprint 9 — Calculator reliability and practical guidance
 
-Status: Planned
+Status: In progress
 
 Improve calculator accuracy, explain assumptions, and make residential/RV sizing workflows easier to validate.
 
 Planned deliverables:
 
-- audit inverter continuous/surge demand assumptions, including simultaneous startup loads;
+- audit inverter continuous/surge demand assumptions, including simultaneous startup loads (first implementation: include other running loads during startup);
 - review load worksheet and system sizing handoff for units and edge cases;
 - clarify battery usable capacity, efficiency losses, and solar production assumptions in results;
 - expand boundary-condition and cross-calculator regression tests;

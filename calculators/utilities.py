@@ -63,7 +63,11 @@ def calculate_inverter_size(input_data):
     headroom = input_data['continuous_headroom_percent'] / 100
 
     recommended_continuous_watts = continuous_load * (1 + headroom)
-    required_surge_watts = max(continuous_load, starting_watts)
+    starting_running_watts = input_data.get('starting_load_running_watts') or 0
+    required_surge_watts = max(
+        continuous_load,
+        continuous_load - starting_running_watts + starting_watts,
+    )
 
     return {
         'recommended_continuous_watts': recommended_continuous_watts,

@@ -99,6 +99,12 @@ class InverterSizingForm(forms.Form):
         initial=0,
         help_text='Starting or surge watts of the largest motor/compressor load.',
     )
+    starting_load_running_watts = forms.DecimalField(
+        label='Running Watts of Starting Load (W)',
+        min_value=0,
+        required=False,
+        help_text='Optional: running watts of the motor/compressor included in the simultaneous continuous load. Allows other running loads to be included during startup.',
+    )
     continuous_headroom_percent = forms.DecimalField(
         label='Continuous Capacity Headroom (%)',
         min_value=0,
