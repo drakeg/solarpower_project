@@ -15,7 +15,7 @@ pycountry==26.2.16
 python-dotenv==1.2.4
 requests==2.34.2
 scipy==1.18.1
-smart-open==8.0.4
+smart-open==9.0.1
 sqlparse==0.6.0
 typing_extensions==4.16.0
 tzdata==2026.6
