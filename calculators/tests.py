@@ -396,3 +396,26 @@ class SimultaneousInverterSurgeTests(TestCase):
             'continuous_headroom_percent': '25',
         })
         self.assertEqual(response.context['inverter_result']['required_surge_watts'], Decimal('4000'))
+
+
+class SystemSizingAssumptionsTests(TestCase):
+    def test_results_explain_energy_and_capacity_assumptions(self):
+        response = self.client.post(
+            reverse('calculators:solar_system_sizing_calculator'),
+            {
+                'daily_energy_use': '2400',
+                'peak_sun_hours': '5',
+                'system_efficiency': '80',
+                'autonomy_days': '2',
+                'battery_voltage': '24',
+                'usable_battery_percent': '75',
+            },
+        )
+        result = response.context['sizing_result']
+        self.assertEqual(result['required_array_watts'], Decimal('600'))
+        self.assertEqual(result['required_usable_battery_wh'], Decimal('4800'))
+        self.assertEqual(result['required_nominal_battery_wh'], Decimal('6400'))
+        self.assertEqual(result['required_battery_ah'], Decimal('6400') / Decimal('24'))
+        self.assertContains(response, 'Calculation Assumptions')
+        self.assertContains(response, 'equivalent full-sun hours')
+        self.assertContains(response, 'not applied a second time')
