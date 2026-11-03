@@ -18,6 +18,10 @@
     <li>Nominal battery-bank capacity: <strong>{{ sizing_result.required_nominal_battery_wh|floatformat:0 }} Wh</strong></li>
     <li>Battery-bank capacity at the selected voltage: <strong>{{ sizing_result.required_battery_ah|floatformat:1 }} Ah</strong></li>
 </ul>
+<h3 class="mt-4">Calculation Assumptions</h3>
+<p>The solar-array estimate divides daily energy use by peak sun hours and overall system efficiency. Peak sun hours are equivalent full-sun hours, not total daylight hours.</p>
+<p>Usable battery energy equals daily energy use multiplied by battery autonomy days. Nominal battery energy divides that requirement by the usable battery capacity percentage; amp-hours divide nominal watt-hours by battery-bank voltage.</p>
+<p>The system efficiency input adjusts solar production only. It is not applied a second time to the battery estimate. Enter battery autonomy based on the energy demand your battery must actually supply; account separately for any battery/inverter losses not already reflected in your load estimate.</p>
 <p>This is a planning estimate. Actual sizing should account for seasonal solar availability, surge loads, equipment specifications, battery chemistry, temperature, and installation-specific losses.</p>
 {% endif %}
 {% endblock %}
