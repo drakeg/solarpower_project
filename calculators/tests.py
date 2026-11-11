@@ -289,6 +289,51 @@ class LoadWorksheetTests(TestCase):
         self.assertFalse(response.context['formset'].is_valid())
         self.assertIsNone(response.context['total_daily_wh'])
 
+    def test_more_than_twenty_rows_are_rejected_without_calculating(self):
+        data = {
+            'form-TOTAL_FORMS': '21',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '20',
+        }
+        for index in range(21):
+            data.update({
+                f'form-{index}-appliance_name': f'Load {index}',
+                f'form-{index}-watts': '10',
+                f'form-{index}-quantity': '1',
+                f'form-{index}-hours_per_day': '1',
+            })
+
+        response = self.client.post(reverse('calculators:load_worksheet'), data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['formset'].is_valid())
+        self.assertEqual(len(response.context['formset'].forms), 20)
+        self.assertIsNone(response.context['total_daily_wh'])
+        self.assertEqual(response.context['load_results'], [])
+        self.assertTrue(response.context['formset'].non_form_errors())
+
+    def test_twenty_rows_remain_valid(self):
+        data = {
+            'form-TOTAL_FORMS': '20',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '20',
+        }
+        for index in range(20):
+            data.update({
+                f'form-{index}-appliance_name': f'Load {index}',
+                f'form-{index}-watts': '10',
+                f'form-{index}-quantity': '1',
+                f'form-{index}-hours_per_day': '1',
+            })
+
+        response = self.client.post(reverse('calculators:load_worksheet'), data)
+
+        self.assertTrue(response.context['formset'].is_valid())
+        self.assertEqual(response.context['total_daily_wh'], Decimal('200'))
+        self.assertEqual(len(response.context['load_results']), 20)
+
     def test_zero_energy_worksheet_does_not_offer_sizing(self):
         response = self.client.post(
             reverse('calculators:load_worksheet'),
