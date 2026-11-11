@@ -62,7 +62,7 @@ def load_estimator(request):
 
 def load_worksheet(request):
     active_page = 'calculators'
-    LoadFormSet = formset_factory(LoadWorksheetForm, extra=5, max_num=20)
+    LoadFormSet = formset_factory(LoadWorksheetForm, extra=5, max_num=20, validate_max=True, absolute_max=20)
     total_daily_wh = None
     load_results = []
 
