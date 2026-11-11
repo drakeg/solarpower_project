@@ -496,3 +496,54 @@ class SystemSizingAssumptionsTests(TestCase):
         self.assertContains(response, 'Calculation Assumptions')
         self.assertContains(response, 'equivalent full-sun hours')
         self.assertContains(response, 'not applied a second time')
+
+
+class CrossCalculatorRegressionTests(TestCase):
+    def test_worksheet_daily_wh_matches_system_sizing_input(self):
+        worksheet = self.client.post(reverse('calculators:load_worksheet'), {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '20',
+            'form-0-appliance_name': 'Laptop',
+            'form-0-watts': '65',
+            'form-0-quantity': '2',
+            'form-0-hours_per_day': '8',
+            'form-1-appliance_name': 'Lights',
+            'form-1-watts': '10',
+            'form-1-quantity': '4',
+            'form-1-hours_per_day': '5',
+        })
+        daily_wh = worksheet.context['total_daily_wh']
+        self.assertEqual(daily_wh, Decimal('1240'))
+
+        sizing = self.client.post(reverse('calculators:solar_system_sizing_calculator'), {
+            'daily_energy_use': str(daily_wh),
+            'peak_sun_hours': '5',
+            'system_efficiency': '80',
+            'autonomy_days': '2',
+            'battery_voltage': '24',
+            'usable_battery_percent': '80',
+        })
+        self.assertTrue(sizing.context['form'].is_valid())
+        result = sizing.context['sizing_result']
+        self.assertEqual(result['required_array_watts'], Decimal('310'))
+        self.assertEqual(result['required_usable_battery_wh'], Decimal('2480'))
+        self.assertEqual(result['required_nominal_battery_wh'], Decimal('3100'))
+        self.assertEqual(result['required_battery_ah'], Decimal('3100') / Decimal('24'))
+
+    def test_zero_autonomy_requires_no_battery_but_still_sizes_solar(self):
+        response = self.client.post(reverse('calculators:solar_system_sizing_calculator'), {
+            'daily_energy_use': '1200',
+            'peak_sun_hours': '4',
+            'system_efficiency': '75',
+            'autonomy_days': '0',
+            'battery_voltage': '12',
+            'usable_battery_percent': '80',
+        })
+        self.assertTrue(response.context['form'].is_valid())
+        result = response.context['sizing_result']
+        self.assertEqual(result['required_array_watts'], Decimal('400'))
+        self.assertEqual(result['required_usable_battery_wh'], Decimal('0'))
+        self.assertEqual(result['required_nominal_battery_wh'], Decimal('0'))
+        self.assertEqual(result['required_battery_ah'], Decimal('0'))
