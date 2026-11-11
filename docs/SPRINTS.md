@@ -196,7 +196,7 @@ Improve calculator accuracy, explain assumptions, and make residential/RV sizing
 
 Planned deliverables:
 
-- audit inverter continuous/surge demand assumptions, including simultaneous startup loads (first implementation: include other running loads during startup);
+- audit inverter continuous/surge demand assumptions, including simultaneous startup loads (include other running loads during startup; validate starting-device running watts against continuous load and surge watts);
 - review load worksheet and system sizing handoff for units and edge cases (enforce the 20-row worksheet submission limit and test its boundary);
 - clarify battery usable capacity, efficiency losses, and solar production assumptions in results (assumption explanations and multi-day regression coverage added);
 - expand boundary-condition and cross-calculator regression tests;

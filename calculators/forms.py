@@ -111,3 +111,21 @@ class InverterSizingForm(forms.Form):
         initial=25,
         help_text='Extra continuous inverter capacity above the expected simultaneous load.',
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        continuous = cleaned_data.get('continuous_load_watts')
+        starting = cleaned_data.get('largest_starting_watts')
+        running = cleaned_data.get('starting_load_running_watts')
+
+        if running is not None and continuous is not None and running > continuous:
+            self.add_error(
+                'starting_load_running_watts',
+                'The starting device running watts cannot exceed the total simultaneous continuous load.',
+            )
+        if running is not None and starting is not None and starting < running:
+            self.add_error(
+                'largest_starting_watts',
+                'Starting watts must be at least the starting device running watts.',
+            )
+        return cleaned_data
