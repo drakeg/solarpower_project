@@ -47,6 +47,7 @@ jobs:
           SECRET_KEY: ci-only-secret-key
         run: python manage.py test
 
+      # Generated Django migrations are schema history, not hand-maintained application code.
       - name: Analyse Python code with Pylint
         env:
           SECRET_KEY: ci-only-secret-key
@@ -54,7 +55,7 @@ jobs:
           pylint --load-plugins=pylint_django \
             --django-settings-module=solarpower_project.settings \
             --disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods,invalid-name,line-too-long \
-            $(git ls-files '*.py')
+            $(git ls-files '*.py' ':!:*/migrations/*.py')
 
 
   docker-compose:
