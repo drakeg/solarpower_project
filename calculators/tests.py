@@ -389,6 +389,38 @@ class InverterSizingTests(TestCase):
         self.assertIsNone(response.context['inverter_result'])
 
 
+class InverterInputValidationTests(TestCase):
+    def test_starting_device_running_watts_cannot_exceed_total_load(self):
+        response = self.client.post(reverse('calculators:inverter_sizing_calculator'), {
+            'continuous_load_watts': '1000',
+            'largest_starting_watts': '3000',
+            'starting_load_running_watts': '1200',
+            'continuous_headroom_percent': '25',
+        })
+        self.assertIsNone(response.context['inverter_result'])
+        self.assertIn('starting_load_running_watts', response.context['form'].errors)
+
+    def test_starting_watts_cannot_be_less_than_device_running_watts(self):
+        response = self.client.post(reverse('calculators:inverter_sizing_calculator'), {
+            'continuous_load_watts': '1600',
+            'largest_starting_watts': '400',
+            'starting_load_running_watts': '600',
+            'continuous_headroom_percent': '25',
+        })
+        self.assertIsNone(response.context['inverter_result'])
+        self.assertIn('largest_starting_watts', response.context['form'].errors)
+
+    def test_equal_running_and_starting_watts_are_valid(self):
+        response = self.client.post(reverse('calculators:inverter_sizing_calculator'), {
+            'continuous_load_watts': '1600',
+            'largest_starting_watts': '600',
+            'starting_load_running_watts': '600',
+            'continuous_headroom_percent': '25',
+        })
+        self.assertTrue(response.context['form'].is_valid())
+        self.assertEqual(response.context['inverter_result']['required_surge_watts'], Decimal('1600'))
+
+
 class CalculateInverterSizeTests(TestCase):
     def test_inverter_size_applies_headroom_and_starting_load(self):
         result = calculate_inverter_size(
