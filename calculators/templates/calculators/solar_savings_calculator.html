@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
 
 <!-- calculators/solar_savings_calculator.html -->
 <form method="post">
@@ -51,11 +52,3 @@
 
 {% endblock %}
 
-{% block scripts %}
-<script>
-    // Initialize Bootstrap popovers
-    $(document).ready(function () {
-        $('[data-bs-toggle="popover"]').popover();
-    });
-</script>
-{% endblock %}

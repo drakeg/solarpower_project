@@ -200,7 +200,7 @@ Planned deliverables:
 - review load worksheet and system sizing handoff for units and edge cases (enforce the 20-row worksheet submission limit and test its boundary);
 - clarify battery usable capacity, efficiency losses, and solar production assumptions in results (assumption explanations and multi-day regression coverage added);
 - expand boundary-condition and cross-calculator regression tests (worksheet-to-sizing energy transfer and zero-autonomy solar-only sizing covered);
-- document calculation methods and known limitations for end users.
+- document calculation methods and known limitations for end users (see `docs/CALCULATOR_GUIDE.md`).
 
 Exit criteria:
 
