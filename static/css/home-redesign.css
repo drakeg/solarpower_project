@@ -95,3 +95,21 @@ body { background:var(--cream); color:var(--ink); font-family:system-ui,-apple-s
   .solar-navbar .nav-link { display:block; width:100%!important; text-align:left!important; }
   .solar-navbar .dropdown-menu { position:static; box-shadow:none; border:0; background:#f0f3eb; margin:.3rem 0 .5rem; }
 }
+
+/* Stable navigation layout across desktop and mobile breakpoints. */
+.solar-navbar > .container { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+.solar-navbar .solar-brand { display:inline-flex; align-items:center; flex:0 0 auto; }
+.solar-navbar .navbar-collapse { min-width:0; }
+.solar-navbar .navbar-nav { padding-left:0; list-style:none; }
+.solar-navbar .nav-link { text-shadow:none; }
+@media(min-width:992px) {
+  .solar-navbar .navbar-collapse { display:flex!important; flex-basis:auto; flex-grow:1; justify-content:flex-end; }
+  .solar-navbar .navbar-nav { display:flex!important; flex-direction:row!important; flex-wrap:nowrap; width:max-content!important; align-items:center; margin:0 0 0 auto!important; }
+  .solar-navbar .nav-item { width:auto!important; }
+  .solar-navbar .nav-link { width:auto!important; padding:.65rem .85rem!important; }
+}
+@media(max-width:991.98px) {
+  .solar-navbar .navbar-collapse:not(.show) { display:none; }
+  .solar-navbar .navbar-collapse.show { display:block; flex-basis:100%; }
+  .solar-navbar .navbar-nav { flex-direction:column!important; width:100%; }
+}

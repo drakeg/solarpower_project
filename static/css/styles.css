@@ -5,36 +5,7 @@ body {
     color: #333;
 }
 
-/* Header styles */
-header {
-    background-color: #5BA45F;
-    color: #fff; /* White text for header */
-    text-shadow: 6px 6px 20px #FFD700; /* Increased offset for a more pronounced effect */
-}
-
-nav.navbar {
-    background-color: #87C36F;
-    color: #fff;
-}
-
-nav.navbar .nav-link {
-    width: 100%;
-    text-align: center;
-    color: #FFFFFF;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Active Navbar Link */
-.navbar-nav .nav-link.active {
-    text-shadow: 0 0 30px #FFD700, 0 0 50px #FFD700, 0 0 75px #FFD700; /* Multiple layers of text shadow for a strong effect */
-    color: #FFFF00 !important; /* Bright yellow text */
-}
-
-/* Navbar Menu Items Hover */
-.navbar-nav .nav-link:hover {
-    background-color: #FFD700; /* Yellow background on hover */
-    color: #000; /* Black text on hover */
-}
+/* Navigation is styled in home-redesign.css. Avoid legacy full-width links. */
 
 .btn {
     background-color: #FFD700;
