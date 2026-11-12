@@ -1,46 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="row mb-2">
-    {% for blog_post in blog_posts %}
-      <div class="col-md-6">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-          <div class="col p-4 d-flex flex-column position-static">
-            {% if blog_post.keywords_list %}
-              <strong class="d-inline-block mb-2 text-primary-emphasis">{{ blog_post.keywords_list|join:', ' }}</strong>
-            {% endif %}
-            <h3 class="mb-0">{{ blog_post.title }}</h3>
-            <div class="mb-1 text-body-secondary">{{ blog_post.date_published }}</div>
-            <p class="card-text mb-auto">{{ blog_post.summary }}</p>
-            <a href="{% url 'blog:blog_detail' blog_post.id %}" class="icon-link gap-1 icon-link-hover stretched-link">
-              Continue reading
-            </a>
-          </div>
-          {% if blog_post.image %}
-            <div class="col-auto d-none d-lg-block">
-              <img src="{{ blog_post.image.url }}" class="img-fluid h-100 object-fit-cover" style="width: 200px;" alt="">
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    {% empty %}
-      <div class="col-12">
-        <p>No blog posts have been published yet.</p>
-      </div>
-    {% endfor %}
+<section class="solar-hero" aria-labelledby="hero-title">
+  <div class="solar-hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> YOUR GUIDE TO SMARTER ENERGY</span>
+    <h1 id="hero-title">Power your next adventure <em>with confidence.</em></h1>
+    <p>Understand your energy needs, size a solar setup that makes sense, and take the guesswork out of going off-grid.</p>
+    <div class="hero-actions">
+      <a class="btn btn-solar-primary" href="{% url 'calculators:load_worksheet' %}">Calculate your power needs <span aria-hidden="true">↗</span></a>
+      <a class="btn btn-solar-secondary" href="{% url 'calculators:solar_system_sizing_calculator' %}">Explore system sizing</a>
+    </div>
+    <div class="hero-note"><span aria-hidden="true">✦</span> Practical tools for homes, RVs, cabins &amp; off-grid living</div>
   </div>
+  <div class="solar-hero-art" aria-hidden="true">
+    <div class="sun-orb"></div>
+    <div class="sun-ring sun-ring-one"></div>
+    <div class="sun-ring sun-ring-two"></div>
+    <div class="hill hill-back"></div>
+    <div class="hill hill-front"></div>
+    <div class="panel-array"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="art-caption">MAKE THE MOST OF EVERY WATT <span>↗</span></div>
+  </div>
+</section>
 
+<section class="tools-section" aria-labelledby="tools-title">
+  <div class="section-heading">
+    <div><span class="section-kicker">START HERE</span><h2 id="tools-title">Everything you need to get started.</h2></div>
+    <p>From your first watt-hour to a complete system plan.</p>
+  </div>
+  <div class="tools-grid">
+    <a class="tool-tile" href="{% url 'calculators:load_worksheet' %}">
+      <span class="tool-icon tool-icon-gold" aria-hidden="true">▦</span><span class="tool-number">01 / PLAN</span>
+      <h3>Daily load worksheet</h3><p>List your appliances and see how much energy you really use each day.</p><span class="tool-link">Build your load profile <span aria-hidden="true">↗</span></span>
+    </a>
+    <a class="tool-tile" href="{% url 'calculators:solar_system_sizing_calculator' %}">
+      <span class="tool-icon tool-icon-green" aria-hidden="true">☀</span><span class="tool-number">02 / DESIGN</span>
+      <h3>Solar system sizing</h3><p>Estimate the panels and battery storage needed to support your lifestyle.</p><span class="tool-link">Size your system <span aria-hidden="true">↗</span></span>
+    </a>
+    <a class="tool-tile" href="{% url 'calculators:inverter_sizing_calculator' %}">
+      <span class="tool-icon tool-icon-blue" aria-hidden="true">⚡</span><span class="tool-number">03 / POWER</span>
+      <h3>Inverter sizing</h3><p>Account for running loads and startup surges before choosing an inverter.</p><span class="tool-link">Find your inverter size <span aria-hidden="true">↗</span></span>
+    </a>
+  </div>
+</section>
+
+<section class="explore-strip" aria-label="More ways to explore">
+  <div><span class="section-kicker">GO FURTHER</span><h2>Make every watt count.</h2><p>Compare potential savings or estimate an individual appliance's daily energy use.</p></div>
+  <div class="explore-actions"><a href="{% url 'calculators:solar_savings_calculator' %}">Solar savings <span aria-hidden="true">↗</span></a><a href="{% url 'calculators:load_estimator' %}">Load estimator <span aria-hidden="true">↗</span></a></div>
+</section>
+
+<section class="journal-section" aria-labelledby="journal-title">
+  <div class="section-heading"><div><span class="section-kicker">THE KNOWLEDGE HUB</span><h2 id="journal-title">Learn as you go.</h2></div><a class="section-text-link" href="{% url 'forum:thread_list' %}">Join the community <span aria-hidden="true">↗</span></a></div>
+  <div class="journal-grid">
+  {% for blog_post in blog_posts %}
+    <article class="journal-card">
+      {% if blog_post.image %}<img class="journal-image" src="{{ blog_post.image.url }}" alt="">{% else %}<div class="journal-placeholder" aria-hidden="true"><span>☀</span></div>{% endif %}
+      <div class="journal-body"><span class="journal-date">{{ blog_post.date_published|date:"M j, Y" }}</span><h3><a href="{% url 'blog:blog_detail' blog_post.id %}">{{ blog_post.title }}</a></h3><p>{{ blog_post.summary }}</p><a class="journal-link" href="{% url 'blog:blog_detail' blog_post.id %}">Read article <span aria-hidden="true">↗</span></a></div>
+    </article>
+  {% empty %}
+    <div class="journal-empty"><span class="journal-empty-icon" aria-hidden="true">✳</span><h3>Good things are charging up.</h3><p>Guides, ideas, and practical solar know-how are coming soon. In the meantime, explore our calculators or join the conversation.</p><a href="{% url 'forum:thread_list' %}">Visit the forum <span aria-hidden="true">↗</span></a></div>
+  {% endfor %}
+  </div>
   {% if blog_posts.paginator.num_pages > 1 %}
-    <nav class="pagination mt-4 d-flex justify-content-center" aria-label="Blog pages">
-      {% if blog_posts.has_previous %}
-        <a href="?page=1" class="px-3 py-1 border">&laquo; First</a>
-        <a href="?page={{ blog_posts.previous_page_number }}" class="px-3 py-1 border">Previous</a>
-      {% endif %}
-      <span class="px-3 py-1 border">Page {{ blog_posts.number }} of {{ blog_posts.paginator.num_pages }}</span>
-      {% if blog_posts.has_next %}
-        <a href="?page={{ blog_posts.next_page_number }}" class="px-3 py-1 border">Next</a>
-        <a href="?page={{ blog_posts.paginator.num_pages }}" class="px-3 py-1 border">Last &raquo;</a>
-      {% endif %}
-    </nav>
+  <nav class="pagination mt-4 d-flex justify-content-center gap-2" aria-label="Blog pages">
+    {% if blog_posts.has_previous %}<a href="?page={{ blog_posts.previous_page_number }}" class="btn btn-outline-secondary">Previous</a>{% endif %}
+    <span class="align-self-center">Page {{ blog_posts.number }} of {{ blog_posts.paginator.num_pages }}</span>
+    {% if blog_posts.has_next %}<a href="?page={{ blog_posts.next_page_number }}" class="btn btn-outline-secondary">Next</a>{% endif %}
+  </nav>
   {% endif %}
+</section>
 {% endblock %}
