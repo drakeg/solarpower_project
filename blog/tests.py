@@ -93,7 +93,7 @@ class BlogListPaginationTests(TestCase):
     def test_empty_blog_has_clear_empty_state(self, _summary):
         response = self.client.get(self.url)
 
-        self.assertContains(response, 'No blog posts have been published yet.')
+        self.assertContains(response, 'Good things are charging up.')
 
     @patch('blog.views.generate_summary', return_value='Summary')
     def test_blog_list_paginates_ten_posts_per_page(self, _summary):
