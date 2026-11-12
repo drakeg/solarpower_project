@@ -9,8 +9,9 @@ import solarpower_project.settings as project_settings
 
 class EnvironmentSettingsTests(SimpleTestCase):
     def reload_settings(self, environment):
-        with patch.dict(os.environ, environment, clear=True):
-            return importlib.reload(project_settings)
+        with patch('dotenv.load_dotenv', return_value=False):
+            with patch.dict(os.environ, environment, clear=True):
+                return importlib.reload(project_settings)
 
     def tearDown(self):
         importlib.reload(project_settings)
@@ -68,6 +69,7 @@ class EnvironmentSettingsTests(SimpleTestCase):
         self.assertTrue(settings.SECURE_HSTS_PRELOAD)
 
     def test_missing_secret_key_fails_fast(self):
-        with patch.dict(os.environ, {}, clear=True):
-            with self.assertRaisesRegex(RuntimeError, 'SECRET_KEY'):
-                importlib.reload(project_settings)
+        with patch('dotenv.load_dotenv', return_value=False):
+            with patch.dict(os.environ, {}, clear=True):
+                with self.assertRaisesRegex(RuntimeError, 'SECRET_KEY'):
+                    importlib.reload(project_settings)
