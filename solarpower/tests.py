@@ -176,7 +176,7 @@ class SharedLayoutTests(TestCase):
     def test_footer_uses_current_year(self):
         response = self.client.get(reverse('blog:home'))
 
-        self.assertContains(response, 'Solar Education Site. All rights reserved.')
+        self.assertContains(response, 'Energy knowledge for wherever life takes you.')
         self.assertNotContains(response, '&copy; 2023', html=False)
 
 
