@@ -76,3 +76,22 @@ body { background:var(--cream); color:var(--ink); font-family:system-ui,-apple-s
 @media(max-width:991px) { .solar-hero { grid-template-columns:1fr; }.solar-hero-art { min-height:280px; }.tools-grid { grid-template-columns:1fr 1fr; }.explore-strip { flex-direction:column; align-items:flex-start; }.journal-grid { grid-template-columns:1fr 1fr; } }
 @media(max-width:650px) { .solar-main { padding-top:1rem; }.solar-hero { border-radius:16px; }.solar-hero-copy { padding:2rem 1.5rem; }.solar-hero h1 { font-size:2.65rem; }.hero-actions { width:100%; }.hero-actions .btn { width:100%; }.section-heading { align-items:start; flex-direction:column; gap:.6rem; }.tools-section,.journal-section { padding-top:3.5rem; }.tools-grid,.journal-grid { grid-template-columns:1fr; }.tool-tile { min-height:260px; }.explore-strip { padding:2rem 1.4rem; margin-top:3.5rem; }.footer-inner { flex-direction:column; text-align:center; } }
 @media(prefers-reduced-motion:reduce) { .tool-tile { transition:none; } }
+
+/* Navigation: override legacy site-wide 100%-width links and center alignment. */
+@media (min-width: 992px) {
+  .solar-navbar .navbar-collapse { flex-grow:1; justify-content:flex-end; }
+  .solar-navbar .navbar-nav { display:flex; flex-direction:row; align-items:center; justify-content:flex-end; width:auto; margin-left:auto!important; margin-right:0!important; }
+  .solar-navbar .nav-item { flex:0 0 auto; width:auto; position:relative; }
+  .solar-navbar .nav-link { display:inline-flex; align-items:center; width:auto!important; text-align:left!important; white-space:nowrap; }
+  .solar-navbar .dropdown-menu { position:absolute; left:auto; right:0; min-width:220px; }
+}
+.solar-navbar .dropdown-menu { background:#fff; border:1px solid #e0e7dc; border-radius:12px; box-shadow:0 16px 38px #173e351c; padding:.5rem; }
+.solar-navbar .dropdown-item { color:var(--ink); background:transparent; border-radius:7px; padding:.65rem .85rem; font-size:.9rem; }
+.solar-navbar .dropdown-item:hover,.solar-navbar .dropdown-item:focus { background:#edf3e8; color:var(--forest); }
+.solar-navbar .dropdown-item:focus-visible { outline:2px solid #2b7554; outline-offset:1px; }
+@media (max-width:991.98px) {
+  .solar-navbar .navbar-collapse { width:100%; padding-top:1rem; }
+  .solar-navbar .navbar-nav { display:flex; flex-direction:column; align-items:stretch; gap:.15rem; width:100%; }
+  .solar-navbar .nav-link { display:block; width:100%!important; text-align:left!important; }
+  .solar-navbar .dropdown-menu { position:static; box-shadow:none; border:0; background:#f0f3eb; margin:.3rem 0 .5rem; }
+}
