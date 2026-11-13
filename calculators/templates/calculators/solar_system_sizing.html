@@ -1,28 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
-<h2>Solar System Sizing</h2>
-<p>Estimate the solar-array and battery-bank size needed to support a daily energy load.</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Calculate System Size</button>
-</form>
-
+<div class="calculator-page">
+  <header class="calculator-heading">
+    <span class="section-kicker">SOLAR PLANNING / SYSTEM DESIGN</span>
+    <h1>Size your solar system</h1>
+    <p>Turn your daily energy needs into a practical starting estimate for solar panels and battery storage.</p>
+  </header>
+  <div class="calculator-layout">
+    <section class="calculator-card" aria-labelledby="sizing-input-title">
+      <h2 id="sizing-input-title">Your energy profile</h2>
+      <p class="calculator-intro">Start with a daily load worksheet or enter your total energy use directly.</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="calculator-fields">
+          {% for field in form %}
+          <div class="calculator-field">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small" role="alert">{{ field.errors }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-solar-primary calculator-submit">Calculate my system <span aria-hidden="true">↗</span></button>
+      </form>
+    </section>
+    <aside class="calculator-aside" aria-label="Planning tips">
+      <span class="section-kicker">BEFORE YOU BEGIN</span>
+      <h2>A few helpful tips</h2>
+      <ol>
+        <li><strong>Know your daily demand.</strong> Use watt-hours (Wh), not watts (W). <a href="{% url 'calculators:load_worksheet' %}">Build a load worksheet</a>.</li>
+        <li><strong>Choose realistic sunlight.</strong> Peak sun hours are equivalent full-sun hours, not daylight duration.</li>
+        <li><strong>Plan for cloudy days.</strong> Battery autonomy is the number of days you want stored energy to cover.</li>
+      </ol>
+      <a class="calculator-guide-link" href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read the methods and limitations <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
 {% if sizing_result %}
-<h3 class="mt-4">Estimated Requirements</h3>
-<ul>
-    <li>Solar array: <strong>{{ sizing_result.required_array_watts|floatformat:0 }} W</strong></li>
-    <li>Usable battery energy: {{ sizing_result.required_usable_battery_wh|floatformat:0 }} Wh</li>
-    <li>Nominal battery-bank capacity: <strong>{{ sizing_result.required_nominal_battery_wh|floatformat:0 }} Wh</strong></li>
-    <li>Battery-bank capacity at the selected voltage: <strong>{{ sizing_result.required_battery_ah|floatformat:1 }} Ah</strong></li>
-</ul>
+<section class="calculator-results" aria-labelledby="sizing-results-title"><span class="section-kicker">YOUR ESTIMATE</span><h2 id="sizing-results-title">Estimated system requirements</h2>
+<div class="calculator-metrics">
+    <div class="calculator-metric"><span>Solar array</span> <strong>{{ sizing_result.required_array_watts|floatformat:0 }} W</strong></div>
+    <div class="calculator-metric"><span>Usable battery energy</span> <strong>{{ sizing_result.required_usable_battery_wh|floatformat:0 }} Wh</strong></div>
+    <div class="calculator-metric"><span>Nominal battery storage</span> <strong>{{ sizing_result.required_nominal_battery_wh|floatformat:0 }} Wh</strong></div>
+    <div class="calculator-metric"><span>Battery-bank capacity</span> <strong>{{ sizing_result.required_battery_ah|floatformat:1 }} Ah</strong></div>
+</div>
 <h3 class="mt-4">Calculation Assumptions</h3>
 <p>The solar-array estimate divides daily energy use by peak sun hours and overall system efficiency. Peak sun hours are equivalent full-sun hours, not total daylight hours.</p>
 <p>Usable battery energy equals daily energy use multiplied by battery autonomy days. Nominal battery energy divides that requirement by the usable battery capacity percentage; amp-hours divide nominal watt-hours by battery-bank voltage.</p>
 <p>The system efficiency input adjusts solar production only. It is not applied a second time to the battery estimate. Enter battery autonomy based on the energy demand your battery must actually supply; account separately for any battery/inverter losses not already reflected in your load estimate.</p>
-<p>This is a planning estimate. Actual sizing should account for seasonal solar availability, surge loads, equipment specifications, battery chemistry, temperature, and installation-specific losses.</p>
+<p>This is a planning estimate. Actual sizing should account for seasonal solar availability, surge loads, equipment specifications, battery chemistry, temperature, and installation-specific losses.</p></section>
 {% endif %}
+</div>
 {% endblock %}

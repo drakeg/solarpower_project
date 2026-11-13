@@ -186,11 +186,11 @@ Sprint 8 exit criteria met:
 - shared navigation, account actions, and layout behavior have regression coverage;
 - the merged Sprint 8 implementation passes the main-branch CI pipeline.
 
-## Current sprint
+## Completed calculator reliability work
 
 ### Sprint 9 — Calculator reliability and practical guidance
 
-Status: In progress
+Status: Complete (main-branch CI passed on merge commit 67177f7)
 
 Improve calculator accuracy, explain assumptions, and make residential/RV sizing workflows easier to validate.
 
@@ -208,6 +208,24 @@ Exit criteria:
 - invalid and boundary inputs produce safe, actionable feedback;
 - critical calculations and calculator handoffs have regression tests;
 - documentation is updated and the full CI matrix passes.
+
+## Current sprint
+
+### Sprint 10 — Calculator user experience
+
+Status: In progress
+
+Goal: Make solar calculations easy to understand and use on desktop, mobile, and RV-sized screens.
+
+Backlog (in priority order):
+
+1. Improve solar sizing input and result layout, preserving existing math and validation.
+2. Improve daily worksheet usability and error presentation.
+3. Standardize calculator styling and accessible input guidance.
+4. Add regression coverage for results, errors, and worksheet-to-sizing handoff.
+5. Verify responsive layout, full Docker tests, and CI before closing the sprint.
+
+Definition of Done: accessible labeled controls, understandable units, clear results and assumptions, unchanged calculation behavior, regression tests, and green CI.
 
 ## Sprint rules
 
