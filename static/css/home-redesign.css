@@ -143,3 +143,12 @@ body { background:var(--cream); color:var(--ink); font-family:system-ui,-apple-s
 .calculator-results>p { color:var(--muted); font-size:.92rem; }
 @media(max-width:800px) { .calculator-layout { grid-template-columns:1fr; } }
 @media(max-width:550px) { .calculator-fields,.calculator-metrics { grid-template-columns:1fr; } }
+
+/* Sprint 10 worksheet: preserve table headers and field labels on narrow screens. */
+.worksheet-table { min-width:650px; }
+.worksheet-table th { color:var(--forest); font-size:.82rem; white-space:nowrap; }
+.worksheet-table td { min-width:115px; }
+.worksheet-table td:first-child { min-width:190px; }
+.worksheet-table input { width:100%; min-width:0; padding:.65rem .7rem; border:1px solid #cdd9ce; border-radius:8px; }
+.worksheet-table input:focus { outline:2px solid #7ba889; outline-offset:1px; }
+.worksheet-table .errorlist { padding-left:1rem; margin:.4rem 0 0; }
