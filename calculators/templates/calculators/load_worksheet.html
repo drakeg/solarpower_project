@@ -1,41 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
-<h2>Daily Load Worksheet</h2>
-<p>Build a daily energy profile from multiple appliances or loads. Leave unused rows blank.</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ formset.management_form }}
-    <div class="table-responsive">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Appliance / Load</th>
-                    <th>Watts</th>
-                    <th>Quantity</th>
-                    <th>Hours / Day</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for form in formset %}
-                <tr>
-                    <td>{{ form.appliance_name }}{{ form.appliance_name.errors }}</td>
-                    <td>{{ form.watts }}{{ form.watts.errors }}</td>
-                    <td>{{ form.quantity }}{{ form.quantity.errors }}</td>
-                    <td>{{ form.hours_per_day }}{{ form.hours_per_day.errors }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <button type="submit" class="btn btn-primary">Calculate Total Load</button>
+<div class="calculator-page">
+<header class="calculator-heading"><span class="section-kicker">SOLAR PLANNING / DAILY LOADS</span><h1>Build your daily load profile</h1><p>Estimate how much energy your appliances consume in a typical day, then carry the total directly into solar system sizing.</p></header>
+<section class="calculator-card" aria-labelledby="worksheet-title">
+<h2 id="worksheet-title">Appliances and daily usage</h2>
+<p class="calculator-intro">Enter running watts for each appliance, how many you use, and average hours per day. Leave unused rows blank. Up to 20 loads are supported.</p>
+<form method="post" novalidate>
+{% csrf_token %}
+{{ formset.management_form }}
+{% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{{ formset.non_form_errors }}</div>{% endif %}
+<div class="table-responsive">
+<table class="table align-middle worksheet-table">
+<thead><tr><th scope="col">Appliance / load</th><th scope="col">Running watts (W)</th><th scope="col">Quantity</th><th scope="col">Hours / day</th></tr></thead>
+<tbody>
+{% for form in formset %}
+<tr>
+{% for field in form.visible_fields %}
+<td><label class="visually-hidden" for="{{ field.id_for_label }}">Load {{ forloop.parentloop.counter }}: {{ field.label }}</label>{{ field }}{% if field.errors %}<div class="text-danger small" role="alert">{{ field.errors }}</div>{% endif %}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<p class="small text-muted">Daily energy = running watts × quantity × hours per day. 1,000 Wh = 1 kWh.</p>
+<button type="submit" class="btn btn-solar-primary">Calculate total daily energy <span aria-hidden="true">↗</span></button>
 </form>
-
+</section>
 {% if total_daily_wh != None %}
-<h3 class="mt-4">Daily Load Profile</h3>
-<table class="table">
+<section class="calculator-results" aria-labelledby="worksheet-results-title"><span class="section-kicker">YOUR ESTIMATE</span><h2 id="worksheet-results-title">Daily load profile</h2>
+<div class="table-responsive"><table class="table">
     <thead><tr><th>Load</th><th>Wh/day</th><th>kWh/day</th></tr></thead>
     <tbody>
         {% for load in load_results %}
@@ -53,11 +48,14 @@
             <th>{{ total_daily_kwh|floatformat:3 }} kWh/day</th>
         </tr>
     </tfoot>
-</table>
+</table></div>
 {% if total_daily_wh > 0 %}
 <p><a class="btn btn-success" href="{% url 'calculators:solar_system_sizing_calculator' %}?daily_energy_use={{ total_daily_wh }}">Size a solar system for this load</a></p>
 {% else %}
 <p>Add at least one load with nonzero daily energy use before sizing a system.</p>
 {% endif %}
+</section>
 {% endif %}
+<p class="calculator-guide-link"><a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations ↗</a></p>
+</div>
 {% endblock %}
