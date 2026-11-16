@@ -1,24 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
-<h2>Inverter Sizing</h2>
-<p>Estimate minimum inverter continuous and surge capability from the AC loads you expect to run.</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Calculate Inverter Size</button>
-</form>
-
+<div class="calculator-page">
+<header class="calculator-heading"><span class="section-kicker">SOLAR PLANNING / AC POWER</span><h1>Find your inverter size</h1><p>Estimate the continuous power and startup surge your inverter needs to support your AC appliances.</p></header>
+<div class="calculator-layout">
+<section class="calculator-card" aria-labelledby="inverter-input-title">
+<h2 id="inverter-input-title">Your AC loads</h2><p class="calculator-intro">Enter the loads you expect to run simultaneously and the largest appliance startup demand.</p>
+<form method="post" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<div class="calculator-fields">
+{% for field in form %}<div class="calculator-field"><label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>{{ field }}
+{% if field.help_text %}<div class="form-text" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+{% if field.errors %}<div class="text-danger small" role="alert">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+</div><button type="submit" class="btn btn-solar-primary calculator-submit">Calculate inverter requirements <span aria-hidden="true">↗</span></button></form></section>
+<aside class="calculator-aside" aria-label="Inverter sizing tips"><span class="section-kicker">BEFORE YOU BEGIN</span><h2>Plan for peak demand</h2>
+<ol><li><strong>Simultaneous loads.</strong> Count devices that may run at the same time, not every device you own.</li><li><strong>Startup surge.</strong> Motors and compressors often draw more power when starting.</li><li><strong>Check the label.</strong> Verify both continuous and surge ratings, including how long the inverter can sustain the surge.</li></ol>
+<a class="calculator-guide-link" href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculation methods and limitations ↗</a></aside></div>
 {% if inverter_result %}
-<h3 class="mt-4">Estimated Inverter Requirements</h3>
-<ul>
-    <li>Recommended continuous capacity: <strong>{{ inverter_result.recommended_continuous_watts|floatformat:0 }} W</strong></li>
-    <li>Minimum surge capability: <strong>{{ inverter_result.required_surge_watts|floatformat:0 }} W</strong></li>
-</ul>
+<section class="calculator-results" aria-labelledby="inverter-results-title"><span class="section-kicker">YOUR ESTIMATE</span><h2 id="inverter-results-title">Estimated Inverter Requirements</h2>
+<div class="calculator-metrics"><div class="calculator-metric"><span>Recommended continuous capacity</span><strong>{{ inverter_result.recommended_continuous_watts|floatformat:0 }} W</strong></div><div class="calculator-metric"><span>Minimum surge capability</span><strong>{{ inverter_result.required_surge_watts|floatformat:0 }} W</strong></div></div>
 <p>Surge estimate assumes the largest starting load may start while other AC loads are running. Enter that load's running watts to avoid double-counting it. If left blank, the estimate conservatively adds the full starting surge to all continuous loads.</p>
 <p>Select an inverter whose published continuous rating meets or exceeds the continuous requirement and whose surge rating/duration can support the actual startup requirements of your equipment.</p>
-<p>This planning estimate does not replace manufacturer specifications. Motors, compressors, air conditioners, pumps, microwaves, and similar loads can have significant startup or transient requirements.</p>
+<p>This planning estimate does not replace manufacturer specifications. Motors, compressors, air conditioners, pumps, microwaves, and similar loads can have significant startup or transient requirements.</p></section>
 {% endif %}
+</div>
 {% endblock %}
