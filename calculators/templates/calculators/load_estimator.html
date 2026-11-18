@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
-<h2>Daily Load Estimator</h2>
-<p>Calculate the daily energy use of an appliance or group of identical devices. Add the Wh/day values for your loads to estimate the daily energy input for the System Sizing calculator.</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Calculate Daily Load</button>
-</form>
-
+<div class="calculator-page">
+<header class="calculator-heading"><span class="section-kicker">SOLAR PLANNING / DAILY ENERGY</span><h1>Estimate appliance energy use</h1><p>Calculate how much energy one appliance—or several identical devices—uses in a typical day.</p></header>
+<div class="calculator-layout">
+<section class="calculator-card" aria-labelledby="load-input-title"><h2 id="load-input-title">Appliance details</h2><p class="calculator-intro">Enter running watts, quantity, and average hours of operation per day.</p>
+<form method="post" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<div class="calculator-fields">
+{% for field in form %}<div class="calculator-field"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+{% if field.help_text %}<div class="form-text" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+{% if field.errors %}<div class="text-danger small" role="alert">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+</div><button class="btn btn-solar-primary calculator-submit" type="submit">Calculate daily energy <span aria-hidden="true">↗</span></button></form></section>
+<aside class="calculator-aside" aria-label="Load estimating tips"><span class="section-kicker">ENERGY BASICS</span><h2>Watts vs. watt-hours</h2>
+<ol><li><strong>Watts (W)</strong> measure instantaneous power draw.</li><li><strong>Watt-hours (Wh)</strong> measure energy used over time: watts × hours × quantity.</li><li><strong>Kilowatt-hours (kWh)</strong> are 1,000 Wh. For a complete system, <a href="{% url 'calculators:load_worksheet' %}">add multiple appliances to a worksheet</a>.</li></ol>
+<a class="calculator-guide-link" href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculation methods and limitations ↗</a></aside></div>
 {% if load_result %}
-<h3 class="mt-4">Daily Energy Use</h3>
-<p><strong>{{ form.cleaned_data.appliance_name }}</strong></p>
-<ul>
-    <li>{{ load_result.daily_wh|floatformat:1 }} Wh/day</li>
-    <li>{{ load_result.daily_kwh|floatformat:3 }} kWh/day</li>
-</ul>
-<p>Use this result together with your other loads to determine the <strong>Daily Energy Use (Wh)</strong> entered in the System Sizing calculator.</p>
+<section class="calculator-results" aria-labelledby="load-results-title"><span class="section-kicker">YOUR ESTIMATE</span><h2 id="load-results-title">Daily Energy Use</h2><p><strong>{{ form.cleaned_data.appliance_name }}</strong></p>
+<div class="calculator-metrics"><div class="calculator-metric"><span>Watt-hours per day</span><strong>{{ load_result.daily_wh|floatformat:1 }} Wh/day</strong></div><div class="calculator-metric"><span>Kilowatt-hours per day</span><strong>{{ load_result.daily_kwh|floatformat:3 }} kWh/day</strong></div></div>
+<p>Add this energy use to your other loads, then enter the total in the <a href="{% url 'calculators:solar_system_sizing_calculator' %}">System Sizing calculator</a>.</p></section>
 {% endif %}
+</div>
 {% endblock %}
