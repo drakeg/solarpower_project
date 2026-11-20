@@ -1,54 +1,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p class="small text-muted">These results are planning estimates. <a href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculator methods and limitations</a>.</p>
-
-<!-- calculators/solar_savings_calculator.html -->
-<form method="post">
-    {% csrf_token %}
-    
-    <div class="mb-3">
-        {{ form.current_energy_cost.label_tag }}
-        {{ form.current_energy_cost }}
-        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.current_energy_cost.help_text }}">?</a>
-    </div>
-    
-    <div class="mb-3">
-        {{ form.solar_system_cost.label_tag }}
-        {{ form.solar_system_cost }}
-        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.solar_system_cost.help_text }}">?</a>
-    </div>
-    
-    <div class="mb-3">
-        {{ form.solar_system_lifetime.label_tag }}
-        {{ form.solar_system_lifetime }}
-        <a href="#" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="{{ form.solar_system_lifetime.help_text }}">?</a>
-    </div>
-    
-    <button type="submit">Calculate Savings</button>
-</form>
-
+<div class="calculator-page">
+<header class="calculator-heading"><span class="section-kicker">SOLAR PLANNING / COSTS</span><h1>Estimate your solar savings</h1><p>Compare your current electricity spending with the upfront cost of a solar system over its expected life.</p></header>
+<div class="calculator-layout">
+<section class="calculator-card" aria-labelledby="savings-input-title"><h2 id="savings-input-title">Your cost assumptions</h2><p class="calculator-intro">This simplified comparison assumes a constant utility bill and a one-time solar system cost.</p>
+<form method="post" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<div class="calculator-fields">
+{% for field in form %}<div class="calculator-field"><label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>{{ field }}
+{% if field.help_text %}<div class="form-text" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+{% if field.errors %}<div class="text-danger small" role="alert">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+</div><button type="submit" class="btn btn-solar-primary calculator-submit">Calculate estimated savings <span aria-hidden="true">↗</span></button></form></section>
+<aside class="calculator-aside" aria-label="Solar savings guidance"><span class="section-kicker">UNDERSTAND THE ESTIMATE</span><h2>What this compares</h2>
+<ol><li><strong>Current costs.</strong> Your monthly bill is multiplied by 12 to estimate annual spending.</li><li><strong>System lifetime.</strong> The entered solar cost is spread over the expected number of years for an annualized comparison.</li><li><strong>Not a full financial model.</strong> This tool does not yet calculate financing, incentives, maintenance, or solar generation.</li></ol>
+<a class="calculator-guide-link" href="https://github.com/drakeg/solarpower_project/blob/main/docs/CALCULATOR_GUIDE.md" target="_blank" rel="noopener noreferrer">Read calculation methods and limitations ↗</a></aside></div>
 {% if savings_breakdown %}
-
-
-<h2>Results</h2>
+<section class="calculator-results" aria-labelledby="savings-results-title"><span class="section-kicker">YOUR ESTIMATE</span><h2 id="savings-results-title">Results</h2>
 <p>This simplified comparison assumes your current monthly utility cost stays constant and that the entered solar-system cost represents the full lifetime system cost.</p>
-<ul>
-    <li>Current annual utility cost: ${{ savings_breakdown.annual_utility_cost|floatformat:2 }}</li>
-    <li>Solar system cost per year of expected life: ${{ savings_breakdown.annualized_system_cost|floatformat:2 }}</li>
-    <li>Estimated annual net savings: ${{ savings_breakdown.annual_net_savings|floatformat:2 }}</li>
-    <li>Utility cost over the system lifetime: ${{ savings_breakdown.lifetime_utility_cost|floatformat:2 }}</li>
-    <li><strong>Estimated lifetime net savings: ${{ savings_breakdown.lifetime_net_savings|floatformat:2 }}</strong></li>
-</ul>
-<p>This calculation is based on the following assumptions:</p>
-<ul>
-    <li>Your current monthly energy cost is ${{ form.cleaned_data.current_energy_cost }}.</li>
-    <li>The total cost of the solar system is ${{ form.cleaned_data.solar_system_cost }}.</li>
-    <li>The expected lifetime of the solar system is {{ form.cleaned_data.solar_system_lifetime }} years.</li>
-</ul>
+<div class="calculator-metrics">
+<div class="calculator-metric"><span>Current annual utility cost</span><strong>${{ savings_breakdown.annual_utility_cost|floatformat:2 }}</strong></div>
+<div class="calculator-metric"><span>Annualized solar system cost</span><strong>${{ savings_breakdown.annualized_system_cost|floatformat:2 }}</strong></div>
+<div class="calculator-metric"><span>Estimated annual net savings</span><strong>${{ savings_breakdown.annual_net_savings|floatformat:2 }}</strong></div>
+<div class="calculator-metric"><span>Utility cost over system lifetime</span><strong>${{ savings_breakdown.lifetime_utility_cost|floatformat:2 }}</strong></div>
+<div class="calculator-metric"><span>Estimated lifetime net savings</span><strong>${{ savings_breakdown.lifetime_net_savings|floatformat:2 }}</strong></div>
+</div>
+<h3>Calculation assumptions</h3>
+<ul><li>Your current monthly energy cost is ${{ form.cleaned_data.current_energy_cost }}.</li><li>The total cost of the solar system is ${{ form.cleaned_data.solar_system_cost }}.</li><li>The expected lifetime of the solar system is {{ form.cleaned_data.solar_system_lifetime }} years.</li></ul>
 <p>The estimate does not yet model utility-rate inflation, solar production, degradation, financing, incentives, maintenance, battery replacement, or the time value of money.</p>
-
+</section>
 {% endif %}
-
+</div>
 {% endblock %}
-
